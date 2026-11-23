@@ -16,10 +16,9 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 
 We are starting with Python 3.11. The first script uses the standard Python library. We will choose and pin the versions of the ML libraries once we know what we are working with.
 
-1. Open the [Flood-It! dataset documentation](https://developers.google.com/analytics/bigquery/app-gaming-demo-dataset).
-2. Check the source table and estimated query cost in BigQuery, then run `sql/event_inventory.sql`. See how many events and players we have and check the available event parameters before deciding what to predict.
-3. Export selected event rows to `data/raw/events.csv` with `user_pseudo_id`, `event_timestamp`, and `event_name` columns.
-4. Run the starter audit from the repository root:
+1. Follow [the data audit instructions](docs/data_audit.md) to get into BigQuery, run the inventory queries and check what we can predict.
+2. Once we have the inventory, check the candidate retention table and decide which target to start with.
+3. If we export event rows to `data/raw/events.csv` with `user_pseudo_id`, `event_timestamp` and `event_name`, we can run the Python audit from the repository root:
 
 ```sh
 python -m gameplay_ml.audit data/raw/events.csv
@@ -33,6 +32,12 @@ docker run --rm -v "$(pwd)/data:/app/data:ro" adaptive-gameplay-ml data/raw/even
 ```
 
 Our step-by-step plan is in [docs/plan.md](docs/plan.md). The actual data, trained models and generated results are kept locally and ignored by Git.
+
+## Keeping track of our work
+
+- [TASKS.md](TASKS.md) - What we need to do, by priority, and what's finished or blocked.
+- [LOG.md](LOG.md) - What we worked on, problems we ran into and how we handled them.
+- [Using the HPC](docs/hpc.md) - How we plan to use the cluster once we start training and tuning models.
 
 ## Structure
 
