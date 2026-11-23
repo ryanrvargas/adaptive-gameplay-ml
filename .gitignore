@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+data/raw/*
+data/processed/*
+results/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!results/README.md
+AutogluonModels/
+*.joblib
+*.pkl
