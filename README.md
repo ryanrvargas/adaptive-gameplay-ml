@@ -1,23 +1,23 @@
 # Adaptive Gameplay and Monetization Using Machine Learning
 
-CSC 475/592 final project. The goal is to predict player behavior from gameplay history, starting with level success, retention and rewarded advertising. In-game purchase prediction is an optional extension.
+This is my final project for CSC 475/592. I want to see how we can use machine learning to predict how someone will play a game, whether they will come back and if they will watch a rewarded ad. If we have time, I also want to look at predicting in-game purchases.
 
 ## Current status
 
 - [x] Project proposal and repository structure
-- [ ] Audit the Flood-It! dataset and confirm usable prediction targets
-- [ ] Create a tabular dataset and establish baseline models
-- [ ] Compare models, tune hyperparameters and benchmark against AutoGluon
-- [ ] Document reproducibility and write the final report
+- [ ] Go through the Flood-It! dataset and see what we can predict
+- [ ] Put the data into a table and train baseline models
+- [ ] Compare models, tune their hyperparameters and compare with AutoGluon
+- [ ] Containerize the project and write the final report
 - [ ] Optional: build a playable puzzle-game demo
 - [ ] Optional: extend to purchase probability and future spending
 
 ## Getting started
 
-Python 3.11 is the starting environment. The initial CSV audit uses the standard library. Model dependencies will be pinned after we select the training data and models.
+We are starting with Python 3.11. The first script uses the standard Python library. We will choose and pin the versions of the ML libraries once we know what we are working with.
 
 1. Open the [Flood-It! dataset documentation](https://developers.google.com/analytics/bigquery/app-gaming-demo-dataset).
-2. Run `sql/event_inventory.sql` in BigQuery after reviewing the source table and estimated query cost. Inspect the counts and available parameters before choosing a target.
+2. Check the source table and estimated query cost in BigQuery, then run `sql/event_inventory.sql`. See how many events and players we have and check the available event parameters before deciding what to predict.
 3. Export selected event rows to `data/raw/events.csv` with `user_pseudo_id`, `event_timestamp`, and `event_name` columns.
 4. Run the starter audit from the repository root:
 
@@ -32,17 +32,17 @@ docker build -t adaptive-gameplay-ml .
 docker run --rm -v "$(pwd)/data:/app/data:ro" adaptive-gameplay-ml data/raw/events.csv
 ```
 
-See [docs/plan.md](docs/plan.md) for the experiment plan and next milestone. Dataset files, trained models, and generated experiment outputs are ignored by Git.
+Our step-by-step plan is in [docs/plan.md](docs/plan.md). The actual data, trained models and generated results are kept locally and ignored by Git.
 
 ## Structure
 
 | Path | Purpose |
 | --- | --- |
-| `gameplay_ml/` | Python modules for the audit, future data preparation, training and evaluation |
-| `sql/` | Queries used to inspect and later export the public sample |
+| `gameplay_ml/` | Python code for the audit and eventually processing, training and testing the models |
+| `sql/` | Queries to look at the data and export it |
 | `data/` | Local raw and processed data |
-| `results/` | Local figures, metrics and models |
-| `docs/` | Project plan, dataset decisions and report notes |
-| `Dockerfile` | Reproducible starting environment |
+| `results/` | Plots, model results and saved models |
+| `docs/` | Project plan, notes on the data and final report |
+| `Dockerfile` | Setup to run the code in a container |
 
-The starter audit is functional. Model training, adaptive gameplay and purchase prediction are future milestones.
+For now the audit script works with an exported CSV. Once we look at the actual dataset, we can start training our models.

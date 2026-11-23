@@ -1,40 +1,40 @@
 # Project plan
 
-## Primary scope
+## What we want to do
 
-Use historical gameplay to predict level success, future rewarded ad usage and player retention. Focus on a single reliable target first so the core machine learning assignment can be completed. An original puzzle-game demo may illustrate predictions after model evaluation.
+I want to see if we can predict whether a player will beat a level, watch a rewarded ad or return to the game based on the way they play. We will start with one prediction that we have enough data for and work from there. If we have time, we can put our models into a small original puzzle game.
 
-## Milestone 1: dataset audit
+## Step 1 - Get and review the data
 
-Source: [Google's Flood-It! BigQuery sample dataset](https://developers.google.com/analytics/bigquery/app-gaming-demo-dataset). The sample is obfuscated and spans 114 days. Confirm the data rather than assuming event definitions or valid monetary fields.
+We will start with [Google's Flood-It! dataset](https://developers.google.com/analytics/bigquery/app-gaming-demo-dataset). We have 114 days of game activity with some of the data obscured. First we need to see what each event means and whether the data has actual revenue amounts.
 
-- Inspect event names, counts, date coverage, distinct players and missing fields.
-- Inspect parameters associated with session, level, score, reward and ad events.
-- Determine whether attempts and outcomes can be matched reliably.
-- Determine whether ad offers and their outcomes are recorded. If offers are absent, predict future reward-event occurrence or count instead of acceptance probability.
-- Confirm event timing and sufficient follow-up for a seven-day retention label.
-- Document the chosen target, feature cutoff, observation window and label window.
+- Check the event names, dates, number of events, unique players and missing values.
+- See what information we have for sessions, scores, levels, rewards and ads.
+- Check if we can match a level attempt with its result.
+- See if the data includes when a player was offered an ad and whether they took it. If it only contains ad rewards, we can predict whether a player will earn a future reward or how many they will earn.
+- Make sure we have enough future data to see if a player came back within seven days.
+- Write down what we are predicting, what data goes into the model and the time periods used for the features and labels.
 
-Completion criteria: a documented audit with a usable target, feature list and eligible sample count.
+By the end of this step we should know what we can predict, what features we can use and how many rows will be available.
 
-## Milestone 2: tabular data and model selection
+## Step 2 - Set up the data and train models
 
-Build a table with one row per eligible player or attempt. Use only information from before the prediction cutoff. Preserve timestamps and player IDs for splitting, without using raw player IDs as predictors.
+Make a table with one row per player or level attempt. Only use information that would be there at the time of the prediction. Keep the timestamps and player IDs so we can split the data correctly. Leave the actual player IDs out of the model inputs.
 
-Reserve approximately 20% as an untouched test set. Use five-fold cross-validation on training data, respecting player grouping or chronology as appropriate. Compare a simple baseline with Logistic Regression, Random Forest and XGBoost for classification, or regression variants for numeric outcomes.
+Split the data into about 80% training and 20% testing. We will use five-fold cross-validation with the training data and keep the testing data for our final evaluation. If needed, split by player or date to avoid data leakage. Start with a simple baseline and try Logistic Regression, Random Forest and XGBoost for classification. For counts or amounts, try regression models.
 
-## Milestone 3: tuning and evaluation
+## Step 3 - Tune the models and compare results
 
-Use grid search or randomized search, record the search ranges and best parameters, and benchmark against AutoGluon with the same data and metric. Compare default and tuned performance. Use precision, recall, F1 and precision-recall AUC for classification and MAE for regression as appropriate to the selected task. Include plots and reproducibility instructions. Ensembling is optional.
+Use grid search or random search and keep track of the hyperparameters we tried and which settings did best. Compare the models before and after tuning and use AutoGluon to see how it compares using the same data and metric. We can use precision, recall, F1 and precision-recall AUC for classification and MAE for regression. Make plots of the results and include the instructions to reproduce them. If we have time, try ensembling.
 
-## Milestone 4: optional demonstration
+## Step 4 - Demo if we have time
 
-Build a small original puzzle-game prototype that illustrates model predictions and optional rewards. Historical outcome prediction alone cannot establish the effect of changing difficulty or ad placement. Any effectiveness claim requires a controlled experiment.
+Make a small original puzzle game to show how the predictions could be used to adjust difficulty or offer optional rewards. If we want to prove that changing the difficulty or when ads appear improves the game, we would have to run a controlled experiment.
 
-## Milestone 5: optional purchase prediction
+## Step 5 - Optional in-game purchases
 
-Check for enough purchase events and reliable amounts. If suitable, predict future purchase probability and future spending. Compare behavior-only features with early purchase history and estimate combined revenue only when both ad and purchase monetary values are available.
+If we get to this part, check if we have enough purchase data. Try predicting whether the player will buy something and how much they will spend. Compare gameplay by itself with gameplay and prior purchases. If we have actual dollar amounts for both advertising and purchases, we can estimate the total revenue.
 
 ## Class submission
 
-Submit code and a reproducible workflow with a report of at most five pages. Include the problem, dataset description, experimental setup, before/after tuning results, best configuration, plots and AutoML comparison. Zip the files for Canvas.
+We need to turn in the code, a way to reproduce the project and a report of five pages or less. Include what problem we are solving, what data we used, how we trained our models, the results before and after tuning, the best model settings, plots and how our models compared to AutoML. Put everything into a ZIP for Canvas.

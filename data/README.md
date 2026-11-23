@@ -1,3 +1,3 @@
 # Data
 
-Place downloaded or exported event CSVs in `raw/` and derived training tables in `processed/`. These directories contain no dataset at initialization. Keep a record of source tables, query dates, filters and label windows in `docs/` when the audit is completed.
+Put the CSV files we get from BigQuery in `raw/`. Once we clean the data and create our training tables, put those in `processed/`. We have not added any data yet. Keep notes in `docs/` on where the data came from, the dates, filters and time periods used to create the labels.

@@ -1,5 +1,5 @@
--- Start by checking which event names and player counts are available.
--- Review the estimated bytes before running this query in BigQuery.
+-- First see what events we have and how many players we have for each event.
+-- Check the estimated amount of data BigQuery will read before running this.
 SELECT
   event_name,
   COUNT(*) AS event_count,

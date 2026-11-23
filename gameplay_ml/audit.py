@@ -1,4 +1,4 @@
-"""Inspect a local export of gameplay events before building training data."""
+"""Go through the exported game data before we train any models."""
 
 import argparse
 import csv
@@ -15,6 +15,7 @@ def audit_events(path):
     missing = Counter()
     total = 0
 
+    # Check that we have the columns we need before going through the data.
     with path.open(encoding='utf-8-sig', newline='') as file:
         reader = csv.DictReader(file)
         absent = REQUIRED_COLUMNS - set(reader.fieldnames or [])
@@ -23,17 +24,20 @@ def audit_events(path):
 
         for row in reader:
             total += 1
+            # Keep track of the empty values in each required column.
             for column in REQUIRED_COLUMNS:
                 if not (row[column] or '').strip():
                     missing[column] += 1
 
             player = (row['user_pseudo_id'] or '').strip()
             event = (row['event_name'] or '').strip()
+            # Count unique players and how often each event occurs.
             if player:
                 players.add(player)
             if event:
                 event_counts[event] += 1
 
+    # Show what we have so we can decide what data to work with.
     print(f'Rows: {total:,}')
     print(f'Unique players: {len(players):,}')
     print('\nMissing required fields:')
