@@ -6,7 +6,8 @@ We will keep this file up to date as we work through the project. Start with the
 
 - [x] T01 - Set up the repository, proposal, task list and work log.
 - [x] T02 - Prepare the queries and a script to audit the data.
-- [ ] T03 - Get access to the Flood-It! dataset through BigQuery. **Blocked: need a BigQuery-enabled Google Cloud project.**
+- [x] T02a - Make a Colab notebook to export the audit results using a Google Cloud sandbox project.
+- [ ] T03 - Get access to the Flood-It! dataset through BigQuery. **Blocked: need the Google sign-in and project ID in Colab, or the exported `flood_it_audit.zip`.**
 - [ ] T04 - Run the event and parameter inventory queries. Record actual event counts, date range, missing values and available ad, level and purchase events.
 - [ ] T05 - Check the number of players with enough data to measure retention. Review reward and level labels and choose the first prediction target.
 - [ ] T06 - Export the candidate training table and review the features, target distribution and remaining missing values.
@@ -34,4 +35,4 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## Next up
 
-T03 and T04. Get into BigQuery, check the project and query estimates, and run the inventory. Once we see the actual results, we can decide which model to build first.
+T03 and T04. Run the Colab export notebook using a free BigQuery sandbox project and get the ZIP of query results. Once we see the actual results, we can decide which model to build first.

@@ -16,6 +16,8 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 
 We are starting with Python 3.11. The first script uses the standard Python library. We will choose and pin the versions of the ML libraries once we know what we are working with.
 
+The easiest way to get the data is to use [the Colab export notebook](notebooks/flood_it_export.ipynb). It runs the four initial SQL queries and gives us a ZIP of the CSVs and query details. See the data audit instructions for the Google Cloud setup.
+
 1. Follow [the data audit instructions](docs/data_audit.md) to get into BigQuery, run the inventory queries and check what we can predict.
 2. Once we have the inventory, check the candidate retention table and decide which target to start with.
 3. If we export event rows to `data/raw/events.csv` with `user_pseudo_id`, `event_timestamp` and `event_name`, we can run the Python audit from the repository root:

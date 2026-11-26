@@ -6,6 +6,17 @@ We are starting with Google's [Flood-It! sample dataset](https://developers.goog
 
 Open the dataset using Google's documentation. We need access to a Google Cloud project with BigQuery enabled. The free BigQuery sandbox is an option. Check the estimated bytes before running each query and stay within the free or authorized quota. We do not need to set up paid billing for this audit.
 
+### Easiest way to get the CSVs
+
+1. Follow [Google's free sandbox setup](https://docs.cloud.google.com/bigquery/docs/sandbox). Create a project or use an existing sandbox project, and copy its project ID (this is your project's ID, not `firebase-public-project`).
+2. Download [`notebooks/flood_it_export.ipynb`](../notebooks/flood_it_export.ipynb) from this repo. Open [Google Colab](https://colab.research.google.com/) and upload the notebook.
+3. Run the first code cell. Sign into Google when prompted and enter your project ID.
+4. Run the second code cell to see the estimated query sizes. The notebook caps the export at 25 GiB of query processing. Use the sandbox or check the remaining free quota in your project before continuing.
+5. Run the third code cell and type `RUN` to export. It will save the audit CSVs, the retention candidate table if the required events exist, and a manifest with the queries and their results into `flood_it_audit.zip`.
+6. Share the ZIP so we can review the real data. The notebook uses the same SQL files listed below and doesn't need your password or a service account key shared with anyone.
+
+We also have the option to run the queries directly in the BigQuery console if Colab is unavailable.
+
 Run these in order and save the results as CSVs under `data/raw/`:
 
 | Query | Output file | What it tells us |
