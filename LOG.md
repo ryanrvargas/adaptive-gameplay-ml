@@ -2,6 +2,13 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-26 - Colab account access and runtime authorization
+
+- Successfully signed in to Colab and opened the export notebook. Started a Python runtime.
+- Reviewed the code and Google's documentation before authorizing the notebook. It queries only the public Flood-It dataset, uses dry runs and a 25 GiB scan cap, and does not read private Drive files or change cloud settings.
+- The additional Google credential authorization failed at the account verification step with a sign-in error. No live BigQuery query results were obtained.
+- Next: complete notebook authorization through a trusted browser or run the same notebook locally in the user's signed-in Colab session, then provide the exported ZIP for the dataset audit.
+
 ## 2026-11-26 - Colab sign-in follow-up
 
 - Tried opening BigQuery again. The console returned Site Unavailable. Colab opens, but the shared browser is still signed out after the sign-in attempt expired.
