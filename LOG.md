@@ -2,6 +2,12 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-26 - Colab sign-in follow-up
+
+- Tried opening BigQuery again. The console returned Site Unavailable. Colab opens, but the shared browser is still signed out after the sign-in attempt expired.
+- Uploaded the verified export notebook to Google Drive so it is ready to open from an authenticated Colab session. The notebook contains the four SQL queries and the same 25 GiB cap.
+- Still blocked on live BigQuery access and getting the ZIP with real data. No actual queries ran and no model training started.
+
 ## 2026-11-26 - Getting access to the data
 
 ### What we did
