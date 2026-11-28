@@ -7,18 +7,19 @@ We will keep this file up to date as we work through the project. Start with the
 - [x] T01 - Set up the repository, proposal, task list and work log.
 - [x] T02 - Prepare the queries and a script to audit the data.
 - [x] T02a - Make a Colab notebook to export the audit results using a Google Cloud sandbox project.
-- [ ] T03 - Get access to the Flood-It! dataset through BigQuery. **Blocked: need the Google sign-in and project ID in Colab, or the exported `flood_it_audit.zip`.**
-- [ ] T04 - Run the event and parameter inventory queries. Record actual event counts, date range, missing values and available ad, level and purchase events.
-- [ ] T05 - Check the number of players with enough data to measure retention. Review reward and level labels and choose the first prediction target.
-- [ ] T06 - Export the candidate training table and review the features, target distribution and remaining missing values.
+- [x] T03 - Get access to the Flood-It! dataset through BigQuery. Ryan successfully exported `flood_it_audit.zip`.
+- [x] T04 - Run the event and parameter inventory queries. Record actual event counts, date range, missing values and available ad, level and purchase events.
+- [x] T05 - Check the number of players with enough data to measure retention. Choose seven-day return as the first target (3,947 players, 1,076 returned). Ad rewards and level outcomes are follow-up targets.
+- [x] T06 - Export the candidate training table and review the features, target distribution and remaining missing values.
 
 ## P1 - Train and evaluate the models
 
-- [ ] T07 - Finalize the table and split the data without leakage. Reserve about 20% for testing.
+- [ ] T07 - Finalize the feature set and use a chronological train/test split. Reserve about 20% for testing, with a seven-day gap so training labels are known before the earliest test prediction. Keep player IDs and timestamps out of model inputs.
 - [ ] T08 - Train a simple baseline, Logistic Regression, Random Forest and XGBoost. Compare with five-fold cross-validation on the training data.
 - [ ] T09 - Tune hyperparameters using grid or random search. Save the settings and compare results before and after tuning.
 - [ ] T10 - Train AutoGluon with the same training data and compare all final models on the held-out data.
 - [ ] T11 - Make the plots and save the evaluation metrics and best model configuration.
+- [ ] T11a - After the first retention models, check an enriched export with quickplay wins, failures, retries and extra-step use. Assess a separate future ad-reward event target if enough positive players remain after the time split. Do not call this ad acceptance or revenue without offer and monetary data.
 
 ## P2 - Package the project
 
@@ -35,4 +36,4 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## Next up
 
-T03 and T04. Run the Colab export notebook using a free BigQuery sandbox project and get the ZIP of query results. Once we see the actual results, we can decide which model to build first.
+T07 and T08. Use the validated retention table from the export to create a leakage-safe split, train the baseline and compare models. No new Google login is needed for the first experiment.
