@@ -2,6 +2,32 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-28 - E01 baseline results from Ryan's laptop (T08)
+
+### What we did
+
+- Ryan ran the baseline experiment on his Windows machine using Python 3.11.9, NumPy 2.2.6, SciPy 1.17.1, scikit-learn 1.7.2, XGBoost 3.0.5, threadpoolctl 3.8.0 and one CPU thread. All 20 model/fold fits returned results. This resolved the previous execution environment blocker.
+- Checked the uploaded experiment metadata against our original export hash, verified the training CSV hash against the locally reproduced split, confirmed all five fold sizes and class prevalence, and independently recalculated every mean and sample standard deviation from the 20 fold rows. All matched. The run metadata reports test_used=false.
+- Saved the aggregate output files in `docs/experiments/E01/`. No player-level data or credentials were committed.
+
+| Model | Mean AP ± SD | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier | Mean fit (s) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression | 0.5793 ± 0.0514 | 0.7407 | 0.7579 | 0.6902 | 0.2866 | 0.4044 | 0.1720 | 0.0038 |
+| XGBoost | 0.4921 ± 0.0433 | 0.6823 | 0.7219 | 0.5210 | 0.4082 | 0.4568 | 0.2057 | 0.0665 |
+| Random Forest | 0.4664 ± 0.0394 | 0.6861 | 0.7082 | 0.4898 | 0.4299 | 0.4565 | 0.2017 | 0.1614 |
+| Dummy | 0.2884 ± 0.0413 | 0.5000 | 0.7116 | 0.0000 | 0.0000 | 0.0000 | 0.2058 | 0.0003 |
+
+### What we learned
+
+- Logistic Regression ranked first by the prespecified primary metric, average precision, in all five validation folds. It improved AP by 0.2909 absolute over the dummy model (about twice the baseline AP) and by 0.0872 over untuned XGBoost. It also had highest mean ROC-AUC and lowest Brier score.
+- At threshold 0.5, Logistic Regression has high precision but low recall. It misses about 71% of recorded returners in the validation folds. XGBoost and Random Forest achieved higher F1 and recall at the same threshold, despite worse ranking performance. A threshold can be selected using training validation predictions later if justified by the use case; do not tune it on the held-out test set.
+- Performance varies across folds; these are validation statistics, not final test results. The 790 test players remain reserved.
+- Total measured fit time for the 20 fits was 1.160 seconds (not total end-to-end runtime). This is evidence that this small cohort does not require HPC for baseline fits. We will time the hyperparameter search and consider HPC for larger searches or AutoGluon rather than assuming it is faster.
+
+### Next up
+
+T09: run hyperparameter search with the same folds, primary AP metric and fixed seed. Compare untuned and tuned configurations; retain the final test set for the end of model selection.
+
 ## 2026-11-27 - Baseline experiment code and paper notes (T08)
 
 ### What we did
