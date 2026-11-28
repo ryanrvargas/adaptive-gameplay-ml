@@ -16,7 +16,7 @@ We will keep this file up to date as we work through the project. Start with the
 
 - [x] T07 - Finalize the feature set and use a chronological train/test split. Reserve about 20% for testing, with a seven-day gap so training labels are known before the earliest test prediction. Keep player IDs and timestamps out of model inputs.
 - [x] T08 - Train a simple baseline, Logistic Regression, Random Forest and XGBoost. Compare with five-fold cross-validation on the training data. E01 verified: Logistic Regression leads with mean AP 0.5793.
-- [ ] T09 - Tune hyperparameters using grid or random search. Save the settings and compare results before and after tuning.
+- [x] T09 - Tune hyperparameters using grid or random search. E02 completed: 72 configurations, 360 fits, tuned mean AP Logistic Regression 0.5814, Random Forest 0.5769, XGBoost 0.5715.
 - [ ] T10 - Train AutoGluon with the same training data and compare all final models on the held-out data.
 - [ ] T11 - Make the plots and save the evaluation metrics and best model configuration.
 - [ ] T11a - After the first retention models, check an enriched export with quickplay wins, failures, retries and extra-step use. Assess a separate future ad-reward event target if enough positive players remain after the time split. Do not call this ad acceptance or revenue without offer and monetary data.
@@ -36,4 +36,4 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## Next up
 
-T09. Tune the three models using the same five purged folds and mean average precision. Compare against E01 and preserve the final 790 test players until model selection is complete.
+T10. Run AutoGluon with the same purged validation folds, compare with E01/E02 and freeze model settings before evaluating the final 790 test players.
