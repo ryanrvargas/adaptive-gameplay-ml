@@ -81,6 +81,8 @@ py -3.11 -m venv .venv-automl
 .\.venv-automl\Scripts\python.exe -m gameplay_ml.train_automl
 ```
 
+If an earlier installation failed with `ModuleNotFoundError: No module named 'typing_extensions'`, pull the latest changes and rerun the requirements installation in the existing AutoML environment. The corrected requirements were verified in a fresh Linux environment. Optional PyTorch/CUDA detection warnings are expected for this CPU-only portfolio.
+
 The five-fold run writes aggregate metrics and local models under `results/retention_automl/`. The archived [E03 results](docs/experiments/E03/) show mean AP 0.5524. The inner chronological tuning split excludes overlapping label windows, so AutoGluon refit uses fewer rows than the manual models. See the experiment notes. Do not commit the local model directories.
 
 ## Keeping track of our work
