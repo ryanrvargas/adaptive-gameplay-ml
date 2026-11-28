@@ -2,6 +2,34 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-27 - Prepare the retention training and testing sets (T07)
+
+### What we did
+
+- Added `gameplay_ml/prepare_retention.py` to load the Colab ZIP, check required fields and split players chronologically. It writes ignored local train/test CSVs and a summary with the five validation folds.
+- Features: first 24 hours of total events, sessions, level starts, level ends and scores posted. The target is whether a session starts in the next seven days. IDs and timestamps are only for checking and splitting, not model inputs.
+- The last approximately 20% of players are the final test set. Players with a common prediction timestamp stay together. Remove training rows whose seven-day label windows extend past the earliest test prediction.
+
+| Split | Players | Returned | Did not return |
+| --- | ---: | ---: | ---: |
+| Training | 2,795 | 818 | 1,977 |
+| Gap (excluded) | 362 | 81 | 281 |
+| Test | 790 | 177 | 613 |
+
+- First test prediction: September 9, 2018, at 01:44:20.385 UTC. All training labels end by that time.
+- Five expanding-window validation folds on training data only, using the same seven-day gap before each validation block. Each validation fold contains 466 players; training sizes are 357, 663, 1,146, 1,448 and 2,073. Both classes appear in all training and validation folds.
+- The 72.7% overall non-return rate is why accuracy alone is not enough. Compare PR-AUC, recall, precision and F1 with a dummy baseline; reserve held-out testing until model selection and tuning are done.
+
+### Verification
+
+- Four unit tests passed for timestamp ties, time gaps, five folds, sorting/label conversion, duplicate IDs and invalid feature windows.
+- Verified all 3,947 player IDs accounted for without overlap, all split/fold training label windows end before or at the next evaluation prediction, and identical outputs on rerun.
+- No new packages, HPC jobs or database queries required. No model trained yet. Raw player rows and generated split files are not committed.
+
+### Next up
+
+T08: train and compare baseline models using the validation folds. Run `python -m gameplay_ml.prepare_retention path/to/flood_it_audit.zip` from the repository root to reproduce these splits.
+
 ## 2026-11-27 - Flood-It! data obtained and audited
 
 ### What we did
