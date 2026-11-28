@@ -2,6 +2,27 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-28 - Windows AutoML replication and E04 final test evaluation
+
+- Ryan's Windows AutoGluon rerun completed all five outer folds after the typing_extensions repair. Console AP values: 0.4869, 0.6358, 0.5423, 0.5812, 0.5008; mean 0.5494. Low available memory (184–455 MB reported) caused LightGBM to skip in all five folds via its memory-early-stop callback ('NoneType' object is not iterable); XGBoost emitted memory warnings. Do not count this as an exact six-model replication. Use the verified Linux E03 result for the formal comparison. No need to disable memory guards or install PyTorch.
+- Froze the E04 protocol in GitHub before computing held-out scores, including the validation-selected tuned Logistic Regression, all other baseline/tuned comparators, fixed 0.5 threshold, AutoGluon portfolio and separate package versions. Added evaluate_retention.py. Verified original export hash, train hash, chronological split contents and disjoint time windows. Both environments evaluated the same 790 players (177 positive, 613 negative).
+- Manual environment initially lacked XGBoost after environment restart; installed the exact 3.0.5 dependency in that environment before manual training. AutoGluon successfully trained all six model families in clean Linux; refitted component models used 2,529 rows (1,970 inner fit + 559 tuning; 266 inner-gap rows excluded). Manual models used all 2,795 training rows.
+- Archived both aggregate result sets and protocol under docs/experiments/E04/. Verified shared hashes and confusion matrices against accuracy, precision and recall. No individual predictions or player IDs committed.
+
+| Model | Test AP | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Dummy | 0.2241 | 0.5000 | 0.7759 | 0.0000 | 0.0000 | 0.0000 | 0.1786 |
+| Logistic Regression (untuned) | 0.4510 | 0.7128 | 0.7962 | 0.5851 | 0.3107 | 0.4059 | 0.1581 |
+| Logistic Regression (tuned; validation-selected) | 0.4536 | 0.7133 | 0.7975 | 0.5934 | 0.3051 | 0.4030 | 0.1577 |
+| Random Forest (untuned) | 0.3818 | 0.6844 | 0.7532 | 0.4477 | 0.4350 | 0.4413 | 0.1782 |
+| Random Forest (tuned) | 0.4704 | 0.7368 | 0.7848 | 0.5280 | 0.3729 | 0.4371 | 0.1534 |
+| XGBoost (untuned) | 0.4322 | 0.6909 | 0.7608 | 0.4577 | 0.3672 | 0.4075 | 0.1743 |
+| XGBoost (tuned) | 0.4671 | 0.7398 | 0.7899 | 0.5420 | 0.4011 | 0.4610 | 0.1530 |
+| AutoGluon | 0.4763 | 0.7378 | 0.7899 | 0.5455 | 0.3729 | 0.4430 | 0.1535 |
+
+- AutoGluon had highest observed test AP, while tuned XGBoost led ROC-AUC and F1 and tuned Logistic Regression led accuracy. The validation-selected model remains tuned Logistic Regression; we do not choose a new winner or tune settings using test data. Differences between models are small on this single later cohort. Test AP was lower than validation AP; lower test return prevalence (22.4% vs 28.8% mean validation) and temporal differences are plausible factors, not proven explanations.
+- All tuned classifiers improved test AP compared with their untuned versions. No HPC needed for these CPU experiments. Next: T11 plot results and explain the model comparison, then reproducibility/containerization and report; optional new targets must use a new prespecified evaluation rather than tuning this test set.
+
 ## 2026-11-28 - Fix AutoGluon clean-install error on Windows
 
 - Ryan installed the pinned AutoML packages successfully, but importing AutoGluon failed with ModuleNotFoundError: No module named 'typing_extensions'. The earlier Linux environment inherited typing_extensions from the system Python, masking the missing dependency. The error occurred before model training; it does not change E03 results.
