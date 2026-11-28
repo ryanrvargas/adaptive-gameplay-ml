@@ -7,7 +7,7 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 - [x] Project proposal and repository structure
 - [x] Go through the Flood-It! dataset and see what we can predict
 - [x] Prepare the retention training and testing table
-- [ ] Train baseline models
+- [x] Train baseline models
 - [ ] Compare models, tune their hyperparameters and compare with AutoGluon
 - [ ] Containerize the project and write the final report
 - [ ] Optional: build a playable puzzle-game demo
@@ -57,7 +57,7 @@ python -m unittest discover -s tests -v
 python -m gameplay_ml.train_baselines
 ```
 
-Results are written to `results/retention_baselines/`. Real model training is pending; see the experiment notes for the planned method and results status.
+Results are written to `results/retention_baselines/`. The first real run is complete. Logistic Regression led with mean validation AP 0.5793. The verified aggregate outputs are archived in [docs/experiments/E01/](docs/experiments/E01/). See the experiment notes for interpretation. We have not evaluated the final test set.
 
 ## Keeping track of our work
 
