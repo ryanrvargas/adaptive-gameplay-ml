@@ -2,6 +2,14 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-28 - T11 paper figures completed
+
+- Added `gameplay_ml/plot_results.py`, `requirements-plots.txt` and a figure-generation test.
+- Used only archived aggregate E01–E04 metrics. Validated E01/E02 baseline AP consistency and the 790-player confusion-matrix totals. No new model fits or test-driven changes.
+- Generated three SVG and 300 DPI PNG figures: before/after tuning (mean AP and sample SD), validation versus held-out AP (including the different dummy prevalences), and four final confusion matrices at threshold 0.5. Reviewed each PNG visually; archived SVGs and proposed captions in `docs/figures/`. The plotting test passed.
+- Research interpretation: Random Forest showed the largest tuning gain; the ranking changes on the held-out cohort, and the confusion matrices make the low positive-class recall visible. The validation-selected Logistic Regression correctly identified 54 of 177 returners; tuned XGBoost identified 71. Accuracy alone overstates usefulness because 613 of 790 test players did not return. Error bars represent descriptive fold SD, not confidence intervals.
+- No blocker or HPC required. T11 complete; next is the enriched gameplay/reward-data feasibility check (T11a). It must be a separate exploratory analysis with a prespecified evaluation protocol; do not use the E04 test results to choose configurations.
+
 ## 2026-11-28 - Windows AutoML replication and E04 final test evaluation
 
 - Ryan's Windows AutoGluon rerun completed all five outer folds after the typing_extensions repair. Console AP values: 0.4869, 0.6358, 0.5423, 0.5812, 0.5008; mean 0.5494. Low available memory (184–455 MB reported) caused LightGBM to skip in all five folds via its memory-early-stop callback ('NoneType' object is not iterable); XGBoost emitted memory warnings. Do not count this as an exact six-model replication. Use the verified Linux E03 result for the formal comparison. No need to disable memory guards or install PyTorch.
