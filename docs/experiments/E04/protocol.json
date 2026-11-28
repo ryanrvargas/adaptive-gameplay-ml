@@ -1,0 +1,112 @@
+{
+  "experiment": "E04",
+  "selection": "average_precision",
+  "validation_selected_model": "Logistic Regression (tuned)",
+  "source_sha256": "474e7ed636a5891ace36645fe5d5bc6b593be47b8f3abaef26ef9eee7ed67c79",
+  "train_csv_sha256": "ccd6f1c36d6efcea5e082f95a992d15233734745581ba90d13cfe92fdc616ec9",
+  "features": [
+    "early_events",
+    "early_sessions",
+    "early_level_starts",
+    "early_level_ends",
+    "early_scores_posted"
+  ],
+  "target": "returned_next_7_days",
+  "classification_threshold": 0.5,
+  "seed": 42,
+  "train_players": 2795,
+  "test_players": 790,
+  "excluded_players": 362,
+  "manual": {
+    "baseline_settings": {
+      "Logistic Regression": {
+        "preprocessing": "StandardScaler fitted within each fold",
+        "C": 1,
+        "solver": "lbfgs",
+        "max_iter": 1000,
+        "random_state": 42
+      },
+      "Random Forest": {
+        "n_estimators": 100,
+        "random_state": 42,
+        "n_jobs": 1
+      },
+      "XGBoost": {
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.3,
+        "objective": "binary:logistic",
+        "eval_metric": "logloss",
+        "random_state": 42,
+        "n_jobs": 1,
+        "tree_method": "hist"
+      }
+    },
+    "best_parameters": {
+      "Logistic Regression": {
+        "logisticregression__C": 0.1,
+        "logisticregression__class_weight": null
+      },
+      "Random Forest": {
+        "max_depth": 3,
+        "min_samples_leaf": 1,
+        "n_estimators": 100
+      },
+      "XGBoost": {
+        "learning_rate": 0.03,
+        "max_depth": 2,
+        "min_child_weight": 1,
+        "n_estimators": 100
+      }
+    },
+    "packages": {
+      "numpy": "2.2.6",
+      "scipy": "1.17.1",
+      "scikit-learn": "1.7.2",
+      "xgboost": "3.0.5",
+      "threadpoolctl": "3.8.0"
+    },
+    "include_dummy": true,
+    "include_untuned": true
+  },
+  "automl": {
+    "portfolio": {
+      "LR": {},
+      "RF": {
+        "n_estimators": 100
+      },
+      "XT": {
+        "n_estimators": 100
+      },
+      "GBM": {
+        "num_boost_round": 100
+      },
+      "CAT": {
+        "iterations": 100
+      },
+      "XGB": {
+        "n_estimators": 100
+      }
+    },
+    "inner_holdout_fraction": 0.2,
+    "inner_gap_days": 7,
+    "bagging": false,
+    "stacking": false,
+    "weighted_ensemble": true,
+    "refit_on_inner_train_and_tune": true,
+    "inner_gap_excluded_from_refit": true,
+    "packages": {
+      "autogluon.tabular": "1.5.0",
+      "numpy": "2.3.5",
+      "pandas": "2.2.3",
+      "scipy": "1.16.3",
+      "scikit-learn": "1.7.2",
+      "xgboost": "3.1.3",
+      "lightgbm": "4.6.0",
+      "catboost": "1.2.10",
+      "threadpoolctl": "3.6.0"
+    },
+    "require_all_six_model_families": true
+  },
+  "notes": "Freeze before computing held-out predictions. Train manual models on entire eligible training set; AutoGluon selects on purged inner holdout and refits on inner fit + holdout only. Evaluate AP, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1, Brier and confusion matrix at threshold 0.5. No post-test selection or tuning."
+}
