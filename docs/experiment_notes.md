@@ -59,7 +59,42 @@ Or download and run [retention_baselines.ipynb](../notebooks/retention_baselines
 
 ## E02 - Hyperparameter search (T09)
 
-Pending. Use the same five chronological folds and same primary metric to select configurations. Record search spaces, sampled configurations, seed, time, best settings and the change from E01. Do not use the test data to choose a threshold or settings.
+Status: **Completed and verified (2026-11-28).**
+
+Used scikit-learn GridSearchCV with the same five expanding, seven-day-purged folds and the original E01 estimators. All 72 configurations were evaluated (360 total fits), including each untuned baseline. Scored using the same average precision, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1 and Brier score functions as E01, with threshold 0.5. Picked the highest mean validation AP per model, first candidate in deterministic grid order for exact ties. Refit disabled; the held-out test set was never loaded. The selected validation scores may be optimistic due to searching the same folds.
+
+| Model | Grid | Configurations |
+| --- | --- | ---: |
+| Logistic Regression | C = 0.001, 0.01, 0.1, 1, 10, 100; class_weight = None, balanced | 12 |
+| Random Forest | n_estimators = 100, 200; max_depth = None, 3, 6, 10; min_samples_leaf = 1, 5, 15 | 24 |
+| XGBoost | n_estimators = 100, 200; max_depth = 2, 3, 6; learning_rate = 0.03, 0.1, 0.3; min_child_weight = 1, 5 | 36 |
+
+| Model | E01 AP | E02 AP ± SD | AP change | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression | 0.5793 | 0.5814 ± 0.0552 | +0.0021 | 0.7427 | 0.7579 | 0.6940 | 0.2835 | 0.4017 | 0.1719 |
+| Random Forest | 0.4664 | 0.5769 ± 0.0584 | +0.1105 | 0.7556 | 0.7622 | 0.6354 | 0.3976 | 0.4890 | 0.1680 |
+| XGBoost | 0.4921 | 0.5715 ± 0.0504 | +0.0794 | 0.7475 | 0.7648 | 0.6539 | 0.3741 | 0.4756 | 0.1689 |
+
+| Model | Selected parameters | Search wall time (s) |
+| --- | --- | ---: |
+| Logistic Regression | C=0.1, class_weight=None | 0.644 |
+| Random Forest | 100 trees, max_depth=3, min_samples_leaf=1 | 31.014 |
+| XGBoost | 100 trees, max_depth=2, learning_rate=0.03, min_child_weight=1 | 5.956 |
+
+E01 was run on Ryan's Windows laptop (Python 3.11.9). E02 ran on Linux (Python 3.12.14) after creating an isolated environment with the same recorded NumPy, SciPy, scikit-learn, XGBoost and threadpoolctl versions. All three original hyperparameter configurations reproduced the E01 mean AP scores exactly. Total search wall time was 37.614 seconds, not directly comparable with E01 fit-only timing. No HPC job needed for this search.
+
+Logistic Regression remains first by AP, but the gap to Random Forest is only 0.0044; the fold variation is much larger, so we should not claim a clear winner. Restricting tree depth improved both tree models substantially, consistent with reduced overfitting, though that mechanism is not proven by validation scores alone. Random Forest has the best tuned F1, ROC-AUC and Brier score at the fixed threshold; XGBoost has the highest accuracy. Continue to select by AP, which was set before training. Test performance is unknown.
+
+All 8 unit tests passed (including synthetic tests for the baseline and tuning). Independently checked 360 unique candidate/fold rows, 72 means and sample SDs for every metric, best AP selection, source/training hashes, folds and the original E01 scores. The aggregate output is archived in [E02](experiments/E02/). No player-level data committed.
+
+To reproduce from the original repo and prepared split:
+
+```sh
+python -m gameplay_ml.tune_retention
+```
+
+Outputs: candidate_metrics.csv, fold_metrics.csv, tuned_comparison.csv and experiment.json in results/retention_tuning/. Existing results are not overwritten; use --output with a new folder to rerun.
+
 
 ## E03 - AutoML comparison (T10)
 
