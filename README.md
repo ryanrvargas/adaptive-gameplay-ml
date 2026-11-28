@@ -5,7 +5,7 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 ## Current status
 
 - [x] Project proposal and repository structure
-- [ ] Go through the Flood-It! dataset and see what we can predict
+- [x] Go through the Flood-It! dataset and see what we can predict
 - [ ] Put the data into a table and train baseline models
 - [ ] Compare models, tune their hyperparameters and compare with AutoGluon
 - [ ] Containerize the project and write the final report
@@ -52,4 +52,4 @@ Our step-by-step plan is in [docs/plan.md](docs/plan.md). The actual data, train
 | `docs/` | Project plan, notes on the data and final report |
 | `Dockerfile` | Setup to run the code in a container |
 
-For now the audit script works with an exported CSV. Once we look at the actual dataset, we can start training our models.
+The first export has been audited: 5.7 million events from 15,175 players and a candidate retention table of 3,947 players. We will start with seven-day return prediction, then look at gameplay and rewarded ad signals. See the work log for the actual counts and limitations.
