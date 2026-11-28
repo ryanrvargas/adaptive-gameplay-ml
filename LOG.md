@@ -2,6 +2,14 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-28 - E02 Windows replication and E03 AutoGluon comparison
+
+- Ryan ran E02 locally: all 360 fits completed, matching the Linux baseline and tuned mean AP values to four decimals. Reported Windows search times: Logistic Regression 2.5 s, RF 46.4 s, XGBoost 15.8 s (64.7 s combined). These are console-reported rounded times, not a verified full duplicate result archive.
+- Installed AutoGluon Tabular 1.5.0 in a separate environment because its SciPy constraint conflicts with E01/E02. Added reproducible requirements, training code and tests. Six CPU model families (LR, RF, XT, LightGBM, CatBoost, XGBoost) compete and ensemble on an inner time-ordered holdout with a seven-day purge; no outer validation or test data is used in selection.
+- Blocker: refit_full(train_data_extra=...) did not actually include the gap rows in component sample counts. Resolved by explicitly excluding the gap in refit, verifying actual fitted sample counts, repeating the run and documenting the reduced training-size limitation. All five outer AP scores reproduced exactly.
+- AutoGluon mean validation AP 0.5524 (SD 0.0567), ROC-AUC 0.7395, accuracy 0.7494, F1 0.3914. It selected a weighted ensemble on each fold. Total fit/refit time 12.68 seconds; no HPC required. Optional PyTorch/CUDA warnings and small-sample quantile warnings were nonfatal.
+- Ten tests passed, and all aggregate metrics match the fold records. Archived E03 only as aggregate data. T10 validation finished; final test evaluation still pending. See experiment_notes.md for the full method and comparisons.
+
 ## 2026-11-28 - E02 hyperparameter tuning completed (T09)
 
 ### What we did
