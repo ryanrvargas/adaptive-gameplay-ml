@@ -1,21 +1,39 @@
 # Project work log
 
-This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
+This is where we keep track of what we did, what got in the way, how we fixed it and what we need to work on next. Keep the real results separate from our practice runs.
+
+## 2026-11-28 - Getting more gameplay data (T11a)
+
+### What we did
+
+- We went back through the event inventory and checked what information we have for quickplay and ad rewards. There are 523,430 recorded quickplay starts and 1,912 recorded ad rewards from 354 players. We still need the player-level labels before we know if we have enough data for either model.
+- Made two SQL files and a new Colab notebook. The first table uses the first 24 hours to predict whether a player earns an ad reward in the next seven days. The second tries to match each quickplay start with a win or loss on the same board within one hour. We leave unclear matches blank instead of assuming they lost.
+- Added an audit script that checks the labels, counts and time windows and tells us how many positive and negative examples we would have after a chronological split. It also checks how many players appear in both parts of the quickplay split.
+- Both SQL files passed a BigQuery-dialect syntax check. The notebook code compiled and contained the same two queries as the SQL files. All three new synthetic audit tests passed. These checks are not a live BigQuery run, so we still have to check the dry run and actual export.
+
+### What got in the way
+
+- The data we already exported doesn't have the detailed events we need for these two models. The new notebook is ready, but we still need to run it through our existing BigQuery project. No billing or new project needed.
+- We can predict whether someone earns a recorded reward, not whether they accept an ad or how much money they generate. We also can't assume a missing outcome means a loss.
+
+### Next up
+
+Run `notebooks/flood_it_extended_export.ipynb` in Colab, check the scan estimate and download `flood_it_extended.zip`. Once we have it, we'll run the audit and decide which model has enough data to train. Keep the retention results as they are.
 
 ## 2026-11-28 - T11 paper figures completed
 
 - Added `gameplay_ml/plot_results.py`, `requirements-plots.txt` and a figure-generation test.
 - Used only archived aggregate E01–E04 metrics. Validated E01/E02 baseline AP consistency and the 790-player confusion-matrix totals. No new model fits or test-driven changes.
 - Generated three SVG and 300 DPI PNG figures: before/after tuning (mean AP and sample SD), validation versus held-out AP (including the different dummy prevalences), and four final confusion matrices at threshold 0.5. Reviewed each PNG visually; archived SVGs and proposed captions in `docs/figures/`. The plotting test passed.
-- Research interpretation: Random Forest showed the largest tuning gain; the ranking changes on the held-out cohort, and the confusion matrices make the low positive-class recall visible. The validation-selected Logistic Regression correctly identified 54 of 177 returners; tuned XGBoost identified 71. Accuracy alone overstates usefulness because 613 of 790 test players did not return. Error bars represent descriptive fold SD, not confidence intervals.
+- What we learned: tuning helped Random Forest the most. The models ranked differently on the test set, and the confusion matrices show how many players who actually returned were missed. The validation-selected Logistic Regression correctly identified 54 of 177 returners; tuned XGBoost identified 71. Accuracy alone overstates usefulness because 613 of 790 test players did not return. Error bars represent descriptive fold SD, not confidence intervals.
 - No blocker or HPC required. T11 complete; next is the enriched gameplay/reward-data feasibility check (T11a). It must be a separate exploratory analysis with a prespecified evaluation protocol; do not use the E04 test results to choose configurations.
 
 ## 2026-11-28 - Windows AutoML replication and E04 final test evaluation
 
-- Ryan's Windows AutoGluon rerun completed all five outer folds after the typing_extensions repair. Console AP values: 0.4869, 0.6358, 0.5423, 0.5812, 0.5008; mean 0.5494. Low available memory (184–455 MB reported) caused LightGBM to skip in all five folds via its memory-early-stop callback ('NoneType' object is not iterable); XGBoost emitted memory warnings. Do not count this as an exact six-model replication. Use the verified Linux E03 result for the formal comparison. No need to disable memory guards or install PyTorch.
-- Froze the E04 protocol in GitHub before computing held-out scores, including the validation-selected tuned Logistic Regression, all other baseline/tuned comparators, fixed 0.5 threshold, AutoGluon portfolio and separate package versions. Added evaluate_retention.py. Verified original export hash, train hash, chronological split contents and disjoint time windows. Both environments evaluated the same 790 players (177 positive, 613 negative).
+- I ran AutoGluon again on my Windows laptop after we fixed the typing_extensions issue. All five outer folds finished. Console AP values: 0.4869, 0.6358, 0.5423, 0.5812, 0.5008; mean 0.5494. Low available memory (184–455 MB reported) caused LightGBM to skip in all five folds via its memory-early-stop callback ('NoneType' object is not iterable); XGBoost emitted memory warnings. Do not count this as an exact six-model replication. Use the verified Linux E03 result for the formal comparison. No need to disable memory guards or install PyTorch.
+- Before we looked at the test results, we saved the E04 protocol in GitHub. It includes the tuned Logistic Regression we chose during validation, the other baseline/tuned models, the 0.5 threshold, the AutoGluon models and the package versions. Added evaluate_retention.py. Verified original export hash, train hash, chronological split contents and disjoint time windows. Both environments evaluated the same 790 players (177 positive, 613 negative).
 - Manual environment initially lacked XGBoost after environment restart; installed the exact 3.0.5 dependency in that environment before manual training. AutoGluon successfully trained all six model families in clean Linux; refitted component models used 2,529 rows (1,970 inner fit + 559 tuning; 266 inner-gap rows excluded). Manual models used all 2,795 training rows.
-- Archived both aggregate result sets and protocol under docs/experiments/E04/. Verified shared hashes and confusion matrices against accuracy, precision and recall. No individual predictions or player IDs committed.
+- Saved both sets of results and the protocol under docs/experiments/E04/. We checked the file hashes and used the confusion matrices to verify accuracy, precision and recall. Individual predictions and player IDs were left out of GitHub.
 
 | Model | Test AP | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -33,15 +51,15 @@ This is where we will keep track of what we worked on, what got in the way, how 
 
 ## 2026-11-28 - Fix AutoGluon clean-install error on Windows
 
-- Ryan installed the pinned AutoML packages successfully, but importing AutoGluon failed with ModuleNotFoundError: No module named 'typing_extensions'. The earlier Linux environment inherited typing_extensions from the system Python, masking the missing dependency. The error occurred before model training; it does not change E03 results.
+- The AutoML packages installed on my laptop, but trying to import AutoGluon gave us ModuleNotFoundError: No module named 'typing_extensions'. The earlier Linux environment inherited typing_extensions from the system Python, masking the missing dependency. The error occurred before model training; it does not change E03 results.
 - Added typing_extensions==4.16.0 to requirements-automl.txt. Tested a fresh Linux virtual environment without system site packages, installed the corrected requirements, ran pip check (no broken requirements), and reran all five real validation folds. Every AP score matched the archived E03 results exactly; mean AP remained 0.5524.
 - Ryan can repair the existing Windows virtual environment with the updated requirements (no need to recreate it) and rerun train_automl. Windows-specific verification is pending. Do not install PyTorch just to suppress optional GPU detection warnings; this experiment is CPU-only.
 
 ## 2026-11-28 - E02 Windows replication and E03 AutoGluon comparison
 
-- Ryan ran E02 locally: all 360 fits completed, matching the Linux baseline and tuned mean AP values to four decimals. Reported Windows search times: Logistic Regression 2.5 s, RF 46.4 s, XGBoost 15.8 s (64.7 s combined). These are console-reported rounded times, not a verified full duplicate result archive.
+- I ran E02 on my laptop. All 360 fits finished, and the baseline and tuned mean AP scores matched our Linux run to four decimals. Reported Windows search times: Logistic Regression 2.5 s, RF 46.4 s, XGBoost 15.8 s (64.7 s combined). These are console-reported rounded times, not a verified full duplicate result archive.
 - Installed AutoGluon Tabular 1.5.0 in a separate environment because its SciPy constraint conflicts with E01/E02. Added reproducible requirements, training code and tests. Six CPU model families (LR, RF, XT, LightGBM, CatBoost, XGBoost) compete and ensemble on an inner time-ordered holdout with a seven-day purge; no outer validation or test data is used in selection.
-- Blocker: refit_full(train_data_extra=...) did not actually include the gap rows in component sample counts. Resolved by explicitly excluding the gap in refit, verifying actual fitted sample counts, repeating the run and documenting the reduced training-size limitation. All five outer AP scores reproduced exactly.
+- Issue: refit_full(train_data_extra=...) wasn't using the extra gap rows like we expected. We removed that argument, checked the number of rows each model actually trained on and ran it again. AutoGluon used fewer training rows as a result. All five outer AP scores reproduced exactly.
 - AutoGluon mean validation AP 0.5524 (SD 0.0567), ROC-AUC 0.7395, accuracy 0.7494, F1 0.3914. It selected a weighted ensemble on each fold. Total fit/refit time 12.68 seconds; no HPC required. Optional PyTorch/CUDA warnings and small-sample quantile warnings were nonfatal.
 - Ten tests passed, and all aggregate metrics match the fold records. Archived E03 only as aggregate data. T10 validation finished; final test evaluation still pending. See experiment_notes.md for the full method and comparisons.
 
@@ -65,7 +83,7 @@ This is where we will keep track of what we worked on, what got in the way, how 
 | Random Forest | 100 trees, max_depth=3, min_samples_leaf=1 | 31.014 |
 | XGBoost | 100 trees, max_depth=2, learning_rate=0.03, min_child_weight=1 | 5.956 |
 
-- The tree models improved substantially, particularly Random Forest. Logistic Regression remains narrowly ahead by AP, but the difference is small relative to fold variation; reserve judgment for the final held-out evaluation.
+- The tree models got a lot better, especially Random Forest. Logistic Regression was still slightly ahead in AP, but the scores were too close to call a clear winner before testing.
 - Eight unit tests passed. Verified 360 unique fold rows and all candidate summaries/best choices against the recorded scores. Total search wall time: 37.614 seconds. The earlier environment blocker is resolved. No HPC was required for this experiment.
 
 ### Next up
@@ -76,9 +94,9 @@ T10: AutoGluon comparison on the same features, training rows, chronological val
 
 ### What we did
 
-- Ryan ran the baseline experiment on his Windows machine using Python 3.11.9, NumPy 2.2.6, SciPy 1.17.1, scikit-learn 1.7.2, XGBoost 3.0.5, threadpoolctl 3.8.0 and one CPU thread. All 20 model/fold fits returned results. This resolved the previous execution environment blocker.
+- I ran the baseline experiment on my Windows laptop using Python 3.11.9, NumPy 2.2.6, SciPy 1.17.1, scikit-learn 1.7.2, XGBoost 3.0.5, threadpoolctl 3.8.0 and one CPU thread. All 20 model/fold fits returned results. This resolved the previous execution environment blocker.
 - Checked the uploaded experiment metadata against our original export hash, verified the training CSV hash against the locally reproduced split, confirmed all five fold sizes and class prevalence, and independently recalculated every mean and sample standard deviation from the 20 fold rows. All matched. The run metadata reports test_used=false.
-- Saved the aggregate output files in `docs/experiments/E01/`. No player-level data or credentials were committed.
+- Saved the aggregate output files in `docs/experiments/E01/`. We did not put player-level data or credentials on GitHub.
 
 | Model | Mean AP ± SD | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier | Mean fit (s) |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -91,8 +109,8 @@ T10: AutoGluon comparison on the same features, training rows, chronological val
 
 - Logistic Regression ranked first by the prespecified primary metric, average precision, in all five validation folds. It improved AP by 0.2909 absolute over the dummy model (about twice the baseline AP) and by 0.0872 over untuned XGBoost. It also had highest mean ROC-AUC and lowest Brier score.
 - At threshold 0.5, Logistic Regression has high precision but low recall. It misses about 71% of recorded returners in the validation folds. XGBoost and Random Forest achieved higher F1 and recall at the same threshold, despite worse ranking performance. A threshold can be selected using training validation predictions later if justified by the use case; do not tune it on the held-out test set.
-- Performance varies across folds; these are validation statistics, not final test results. The 790 test players remain reserved.
-- Total measured fit time for the 20 fits was 1.160 seconds (not total end-to-end runtime). This is evidence that this small cohort does not require HPC for baseline fits. We will time the hyperparameter search and consider HPC for larger searches or AutoGluon rather than assuming it is faster.
+- The scores vary from fold to fold. These were only our validation results, and we had not used the 790 test players yet.
+- The 20 model fits took 1.160 seconds combined (not counting the entire program). For this small dataset we don't need the HPC yet. We'll time the tuning and AutoGluon experiments before deciding if we should run them there.
 
 ### Next up
 
@@ -111,7 +129,7 @@ T09: run hyperparameter search with the same folds, primary AP metric and fixed 
 ### Blocker and workaround
 
 - The current Python execution environment is unavailable, so we could not run the new tests or execute E01 on real data. No training metrics or runtime have been measured. Do not record estimated or synthetic scores as real results.
-- Run the self-contained `notebooks/retention_baselines.ipynb` in Colab with the existing Flood-It ZIP. No BigQuery calls or Google Cloud credentials are needed. Alternatively run the Python scripts on a local CPU. No new cloud resources or HPC jobs were submitted.
+- Run the self-contained `notebooks/retention_baselines.ipynb` in Colab with the existing Flood-It ZIP. No BigQuery calls or Google Cloud credentials are needed. Alternatively run the Python scripts on a local CPU. We did not create new cloud resources or start any HPC jobs.
 
 ### Next up
 
@@ -149,7 +167,7 @@ T08: train and compare baseline models using the validation folds. Run `python -
 
 ### What we did
 
-- Ryan ran the notebook and uploaded `flood_it_audit.zip`. This resolves the Google authorization blocker for the initial export.
+- I ran the notebook and uploaded `flood_it_audit.zip`. This resolves the Google authorization blocker for the initial export.
 - Checked ZIP integrity, all four CSV row counts against the manifest, and the event inventory total against the dataset summary. All checks passed. The manifest records 1.823 GiB estimated and 1.825 GiB billed, below the 25 GiB cap. Billed bytes are usage, not a statement of dollars charged.
 - Source: 5,700,000 events, 15,175 unique players, 114 days from June 12 through October 3, 2018. There are 37 event types and 205 event/parameter pairs. No missing player IDs, timestamps or event names in the summary.
 - Candidate training table: 3,947 unique players (91.4% of the 4,319 players with a recorded first_open), 1,076 returned in the next seven days (27.26%) and 2,871 did not (72.74%). All required fields are present, no duplicate players, all feature windows are 24 hours, all feature counts are nonnegative and event-specific counts do not exceed total early events. The earliest and latest first-open timestamps are June 12 and September 26, 2018 UTC.
