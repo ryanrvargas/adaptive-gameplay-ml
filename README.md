@@ -59,7 +59,7 @@ python -m unittest discover -s tests -v
 python -m gameplay_ml.train_baselines
 ```
 
-Results are written to `results/retention_baselines/`. The first real run is complete. Logistic Regression led with mean validation AP 0.5793. The verified aggregate outputs are archived in [docs/experiments/E01/](docs/experiments/E01/). See the experiment notes for interpretation. We have not evaluated the final test set.
+Results are written to `results/retention_baselines/`. The first real run is complete. Logistic Regression led with mean validation AP 0.5793. The verified aggregate outputs are archived in [docs/experiments/E01/](docs/experiments/E01/). See the experiment notes for interpretation. The final test results are documented separately in E04.
 
 ## Hyperparameter tuning
 
@@ -69,7 +69,7 @@ After preparing the split and installing the baseline requirements, run:
 python -m gameplay_ml.tune_retention
 ```
 
-The 72-configuration grid search uses the same five folds as E01. It writes aggregate outputs to `results/retention_tuning/`; the verified first run is archived in [docs/experiments/E02/](docs/experiments/E02/). Logistic Regression leads at 0.5814 mean AP, with Random Forest (0.5769) and XGBoost (0.5715) close behind. AutoGluon validation is complete; final test evaluation is next.
+The 72-configuration grid search uses the same five folds as E01. It writes aggregate outputs to `results/retention_tuning/`; the verified first run is archived in [docs/experiments/E02/](docs/experiments/E02/). Logistic Regression leads at 0.5814 mean AP, with Random Forest (0.5769) and XGBoost (0.5715) close behind. AutoGluon validation and final test evaluation are complete.
 
 ## AutoGluon comparison
 
@@ -99,6 +99,10 @@ The manual environment must match the E01/E02 package versions in the frozen pro
 ## Figures for the paper
 
 The [figures and captions](docs/figures/README.md) are generated from the archived aggregate results. Use `requirements-plots.txt` in a separate virtual environment and run `python -m gameplay_ml.plot_results` to generate SVG and 300 DPI PNG versions under `results/figures/`. No new data or model training required.
+
+## Getting more gameplay and ad-reward data
+
+Download [the new Colab export notebook](notebooks/flood_it_extended_export.ipynb) and use our existing BigQuery sandbox. It checks the scan size and downloads `flood_it_extended.zip`. See [what we are trying to predict and how to run the audit](docs/extended_data.md). We haven't run these live queries yet. Keep this data separate from the completed retention experiment.
 
 ## Keeping track of our work
 
