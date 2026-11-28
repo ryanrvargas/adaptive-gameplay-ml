@@ -2,6 +2,12 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-28 - Fix AutoGluon clean-install error on Windows
+
+- Ryan installed the pinned AutoML packages successfully, but importing AutoGluon failed with ModuleNotFoundError: No module named 'typing_extensions'. The earlier Linux environment inherited typing_extensions from the system Python, masking the missing dependency. The error occurred before model training; it does not change E03 results.
+- Added typing_extensions==4.16.0 to requirements-automl.txt. Tested a fresh Linux virtual environment without system site packages, installed the corrected requirements, ran pip check (no broken requirements), and reran all five real validation folds. Every AP score matched the archived E03 results exactly; mean AP remained 0.5524.
+- Ryan can repair the existing Windows virtual environment with the updated requirements (no need to recreate it) and rerun train_automl. Windows-specific verification is pending. Do not install PyTorch just to suppress optional GPU detection warnings; this experiment is CPU-only.
+
 ## 2026-11-28 - E02 Windows replication and E03 AutoGluon comparison
 
 - Ryan ran E02 locally: all 360 fits completed, matching the Linux baseline and tuned mean AP values to four decimals. Reported Windows search times: Logistic Regression 2.5 s, RF 46.4 s, XGBoost 15.8 s (64.7 s combined). These are console-reported rounded times, not a verified full duplicate result archive.
