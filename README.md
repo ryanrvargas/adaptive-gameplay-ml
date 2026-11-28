@@ -45,10 +45,25 @@ This creates `data/processed/retention_split/` with train/test CSVs and a split 
 
 Our step-by-step plan is in [docs/plan.md](docs/plan.md). The actual data, trained models and generated results are kept locally and ignored by Git.
 
+## Training the first models
+
+Download [the baseline Colab notebook](notebooks/retention_baselines.ipynb) and run it with the original flood_it_audit.zip. It installs dependencies, runs tests and returns a ZIP of aggregate metrics. This notebook does not access BigQuery.
+
+Or, after preparing the split, run these locally:
+
+```sh
+python -m pip install -r requirements-baselines.txt
+python -m unittest discover -s tests -v
+python -m gameplay_ml.train_baselines
+```
+
+Results are written to `results/retention_baselines/`. Real model training is pending; see the experiment notes for the planned method and results status.
+
 ## Keeping track of our work
 
 - [TASKS.md](TASKS.md) - What we need to do, by priority, and what's finished or blocked.
 - [LOG.md](LOG.md) - What we worked on, problems we ran into and how we handled them.
+- [Experiment notes for the paper](docs/experiment_notes.md) - Research question, reproducible method, model settings, metrics, limitations and actual results once available.
 - [Using the HPC](docs/hpc.md) - How we plan to use the cluster once we start training and tuning models.
 
 ## Structure
