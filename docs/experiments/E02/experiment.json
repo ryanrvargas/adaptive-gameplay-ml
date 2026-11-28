@@ -1,0 +1,212 @@
+{
+  "run_utc": "2026-11-28T05:18:40.659736+00:00",
+  "experiment": "retention_grid_search",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "packages": {
+    "numpy": "2.2.6",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.7.2",
+    "xgboost": "3.0.5",
+    "threadpoolctl": "3.8.0"
+  },
+  "same_packages_as_e01": true,
+  "seed": 42,
+  "cpu_threads": 1,
+  "source_sha256": "474e7ed636a5891ace36645fe5d5bc6b593be47b8f3abaef26ef9eee7ed67c79",
+  "train_csv_sha256": "ccd6f1c36d6efcea5e082f95a992d15233734745581ba90d13cfe92fdc616ec9",
+  "features": [
+    "early_events",
+    "early_sessions",
+    "early_level_starts",
+    "early_level_ends",
+    "early_scores_posted"
+  ],
+  "target": "returned_next_7_days",
+  "folds": [
+    {
+      "fold": 1,
+      "train_end": 357,
+      "validation_start": 465,
+      "validation_end": 931,
+      "train": {
+        "players": 357,
+        "returned": 109,
+        "did_not_return": 248
+      },
+      "validation": {
+        "players": 466,
+        "returned": 152,
+        "did_not_return": 314
+      }
+    },
+    {
+      "fold": 2,
+      "train_end": 663,
+      "validation_start": 931,
+      "validation_end": 1397,
+      "train": {
+        "players": 663,
+        "returned": 213,
+        "did_not_return": 450
+      },
+      "validation": {
+        "players": 466,
+        "returned": 149,
+        "did_not_return": 317
+      }
+    },
+    {
+      "fold": 3,
+      "train_end": 1146,
+      "validation_start": 1397,
+      "validation_end": 1863,
+      "train": {
+        "players": 1146,
+        "returned": 366,
+        "did_not_return": 780
+      },
+      "validation": {
+        "players": 466,
+        "returned": 109,
+        "did_not_return": 357
+      }
+    },
+    {
+      "fold": 4,
+      "train_end": 1448,
+      "validation_start": 1863,
+      "validation_end": 2329,
+      "train": {
+        "players": 1448,
+        "returned": 459,
+        "did_not_return": 989
+      },
+      "validation": {
+        "players": 466,
+        "returned": 143,
+        "did_not_return": 323
+      }
+    },
+    {
+      "fold": 5,
+      "train_end": 2073,
+      "validation_start": 2329,
+      "validation_end": 2795,
+      "train": {
+        "players": 2073,
+        "returned": 615,
+        "did_not_return": 1458
+      },
+      "validation": {
+        "players": 466,
+        "returned": 119,
+        "did_not_return": 347
+      }
+    }
+  ],
+  "primary_metric": "average_precision",
+  "classification_threshold": 0.5,
+  "search_grids": {
+    "Logistic Regression": {
+      "logisticregression__C": [
+        0.001,
+        0.01,
+        0.1,
+        1.0,
+        10.0,
+        100.0
+      ],
+      "logisticregression__class_weight": [
+        null,
+        "balanced"
+      ]
+    },
+    "Random Forest": {
+      "n_estimators": [
+        100,
+        200
+      ],
+      "max_depth": [
+        null,
+        3,
+        6,
+        10
+      ],
+      "min_samples_leaf": [
+        1,
+        5,
+        15
+      ]
+    },
+    "XGBoost": {
+      "n_estimators": [
+        100,
+        200
+      ],
+      "max_depth": [
+        2,
+        3,
+        6
+      ],
+      "learning_rate": [
+        0.03,
+        0.1,
+        0.3
+      ],
+      "min_child_weight": [
+        1,
+        5
+      ]
+    }
+  },
+  "base_settings": {
+    "Logistic Regression": {
+      "preprocessing": "StandardScaler fitted within each fold",
+      "C": 1.0,
+      "solver": "lbfgs",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "Random Forest": {
+      "n_estimators": 100,
+      "random_state": 42,
+      "n_jobs": 1
+    },
+    "XGBoost": {
+      "n_estimators": 100,
+      "max_depth": 6,
+      "learning_rate": 0.3,
+      "objective": "binary:logistic",
+      "eval_metric": "logloss",
+      "random_state": 42,
+      "n_jobs": 1,
+      "tree_method": "hist"
+    }
+  },
+  "candidate_count": 72,
+  "fold_fit_count": 360,
+  "best_parameters": {
+    "Logistic Regression": {
+      "logisticregression__C": 0.1,
+      "logisticregression__class_weight": null
+    },
+    "Random Forest": {
+      "max_depth": 3,
+      "min_samples_leaf": 1,
+      "n_estimators": 100
+    },
+    "XGBoost": {
+      "learning_rate": 0.03,
+      "max_depth": 2,
+      "min_child_weight": 1,
+      "n_estimators": 100
+    }
+  },
+  "search_seconds": {
+    "Logistic Regression": 0.6437259530000574,
+    "Random Forest": 31.01446308499999,
+    "XGBoost": 5.95556921900004
+  },
+  "test_used": false
+}
