@@ -10,7 +10,7 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 - [x] Train baseline models
 - [x] Tune hyperparameters and compare with the baseline
 - [x] Compare with AutoGluon on five chronological validation folds
-- [ ] Evaluate on the untouched test set
+- [x] Evaluate on the untouched test set
 - [ ] Containerize the project and write the final report
 - [ ] Optional: build a playable puzzle-game demo
 - [ ] Optional: extend to purchase probability and future spending
@@ -84,6 +84,17 @@ py -3.11 -m venv .venv-automl
 If an earlier installation failed with `ModuleNotFoundError: No module named 'typing_extensions'`, pull the latest changes and rerun the requirements installation in the existing AutoML environment. The corrected requirements were verified in a fresh Linux environment. Optional PyTorch/CUDA detection warnings are expected for this CPU-only portfolio.
 
 The five-fold run writes aggregate metrics and local models under `results/retention_automl/`. The archived [E03 results](docs/experiments/E03/) show mean AP 0.5524. The inner chronological tuning split excludes overlapping label windows, so AutoGluon refit uses fewer rows than the manual models. See the experiment notes. Do not commit the local model directories.
+
+## Final evaluation
+
+E04 is frozen and complete. To reproduce it on the original export and prepared split, use the two environments separately (PowerShell):
+
+```powershell
+.\.venv\Scripts\python.exe -m gameplay_ml.evaluate_retention manual data/raw/flood_it_audit.zip
+.\.venv-automl\Scripts\python.exe -m gameplay_ml.evaluate_retention automl data/raw/flood_it_audit.zip
+```
+
+The manual environment must match the E01/E02 package versions in the frozen protocol. The AutoML environment must have enough free RAM to train all six model families; don't disable memory guards. Outputs are under results/retention_final/. The [archived E04 protocol and metrics](docs/experiments/E04/) are the formal results. The final test set is no longer untouched; do not use it to tune settings or choose another model.
 
 ## Keeping track of our work
 
