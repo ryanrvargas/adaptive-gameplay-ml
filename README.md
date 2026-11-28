@@ -96,6 +96,10 @@ E04 is frozen and complete. To reproduce it on the original export and prepared 
 
 The manual environment must match the E01/E02 package versions in the frozen protocol. The AutoML environment must have enough free RAM to train all six model families; don't disable memory guards. Outputs are under results/retention_final/. The [archived E04 protocol and metrics](docs/experiments/E04/) are the formal results. The final test set is no longer untouched; do not use it to tune settings or choose another model.
 
+## Figures for the paper
+
+The [figures and captions](docs/figures/README.md) are generated from the archived aggregate results. Use `requirements-plots.txt` in a separate virtual environment and run `python -m gameplay_ml.plot_results` to generate SVG and 300 DPI PNG versions under `results/figures/`. No new data or model training required.
+
 ## Keeping track of our work
 
 - [TASKS.md](TASKS.md) - What we need to do, by priority, and what's finished or blocked.
