@@ -125,9 +125,24 @@ Executed in a separate Linux Python 3.12.14 environment; pinned AutoGluon and ke
 
 References: [AutoGluon 1.5 fit documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.fit.html), [refit_full documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.refit_full.html).
 
-Reproducibility follow-up: a clean Windows installation initially lacked typing_extensions, causing import failure before training. Pinning typing_extensions==4.16.0 resolved the missing dependency in a completely isolated Linux verification environment; pip check passed, and all five AP scores reproduced exactly. Windows rerun pending.
+Reproducibility follow-up: a clean Windows installation initially lacked typing_extensions, causing import failure before training. Pinning typing_extensions==4.16.0 resolved the missing dependency in a completely isolated Linux verification environment; pip check passed, and all five AP scores reproduced exactly. Windows rerun completed; LightGBM skipped in all five folds after low-memory warnings. Console-reported mean AP was 0.5494, not an exact six-family replication. We retain the verified Linux run as the formal E03 result.
 
-Next: freeze the exact E02 configurations, E03 portfolio/selection procedure and threshold before opening the final 790-player test set. Evaluate once using the held-out data and report both validation and test results.
+## E04 - Final held-out evaluation (T10b)
+
+**Completed and verified (2026-11-28).** The protocol was committed before computing scores; [protocol and aggregate results](experiments/E04/) include the original source and train hashes, fixed search-selected configurations, 0.5 threshold, software versions, test hash and metrics. The primary model selected on validation AP is tuned Logistic Regression. All seven manual variants and the AutoGluon procedure were evaluated once on the same later cohort of 790 players (177 returned; 613 did not). The manual fits use 2,795 rows. AutoGluon refits on 2,529 rows after excluding its 266-row inner gap; all six model families trained and the weighted ensemble was selected using only the inner holdout.
+
+| Model | Test AP | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Dummy | 0.2241 | 0.5000 | 0.7759 | 0.0000 | 0.0000 | 0.0000 | 0.1786 |
+| Logistic Regression (untuned) | 0.4510 | 0.7128 | 0.7962 | 0.5851 | 0.3107 | 0.4059 | 0.1581 |
+| Logistic Regression (tuned; validation-selected) | 0.4536 | 0.7133 | 0.7975 | 0.5934 | 0.3051 | 0.4030 | 0.1577 |
+| Random Forest (untuned) | 0.3818 | 0.6844 | 0.7532 | 0.4477 | 0.4350 | 0.4413 | 0.1782 |
+| Random Forest (tuned) | 0.4704 | 0.7368 | 0.7848 | 0.5280 | 0.3729 | 0.4371 | 0.1534 |
+| XGBoost (untuned) | 0.4322 | 0.6909 | 0.7608 | 0.4577 | 0.3672 | 0.4075 | 0.1743 |
+| XGBoost (tuned) | 0.4671 | 0.7398 | 0.7899 | 0.5420 | 0.4011 | 0.4610 | 0.1530 |
+| AutoGluon | 0.4763 | 0.7378 | 0.7899 | 0.5455 | 0.3729 | 0.4430 | 0.1535 |
+
+AutoGluon had the highest observed test AP (0.4763), tuned XGBoost had highest ROC-AUC and F1, and tuned Logistic Regression had highest accuracy. The latter remains the prespecified selection; these are descriptive comparisons on one test cohort, not grounds to retune or select a new algorithm. Test return prevalence is 22.4%, lower than the mean validation prevalence of 28.8%, which may partly explain the lower AP. All tuned variants improved test AP over their respective untuned variants. The narrow differences and lack of independent external dataset limit generalization. No further tuning on the held-out test set.
 
 
 ## Limitations and interpretation
