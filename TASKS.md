@@ -20,7 +20,9 @@ We will keep this file up to date as we work through the project. Start with the
 - [x] T10a - Run AutoGluon on the same outer folds (inner chronological holdout plus purge); compare validation results. E03 mean AP 0.5524.
 - [x] T10b - Freeze E02/E03 model settings and evaluate all final models on the 790 held-out players once.
 - [x] T11 - Make the plots and save the evaluation metrics and best model configuration.
-- [ ] T11a - After the first retention models, check an enriched export with quickplay wins, failures, retries and extra-step use. Assess a separate future ad-reward event target if enough positive players remain after the time split. Do not call this ad acceptance or revenue without offer and monetary data.
+- [x] T11a.1 - Make the new SQL queries, Colab export notebook and audit script for quickplay and future ad rewards. Preliminary checks passed.
+- [ ] T11a.2 - Run the new Colab export and check the real class counts, matching coverage and chronological splits. **Waiting on `flood_it_extended.zip`.**
+- [ ] T11a.3 - If we have enough data, set up a separate quickplay and/or ad-reward experiment. Keep the finished retention results unchanged.
 
 ## P2 - Package the project
 
@@ -37,4 +39,4 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## Next up
 
-T11a. Prepare an enriched export and assess whether quickplay outcomes and future ad-reward events provide enough usable positive observations for a separate exploratory experiment. Preserve E04 as the completed retention benchmark.
+T11a.2. Run the extended notebook and get the ZIP. Then we can check the data and decide which new model is worth training.
