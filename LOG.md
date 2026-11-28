@@ -2,6 +2,25 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-27 - Baseline experiment code and paper notes (T08)
+
+### What we did
+
+- Added `gameplay_ml/train_baselines.py` and fixed starting configurations for DummyClassifier, Logistic Regression, Random Forest and XGBoost. Logistic Regression scales features inside each fold. The two tree models do not require scaling.
+- Reuse all five chronological validation folds and the exact five initial gameplay features. The script never opens the final test CSV.
+- Select using mean average precision (AP); record mean and standard deviation for AP, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1, Brier score and fit time. Use probability threshold 0.5 and seed 42. Record package versions, platform, hashes, configuration and fold indices in experiment.json.
+- Added two synthetic experiment tests and requirements-baselines.txt. Added a standalone Colab notebook to reproduce the split, run all tests, train the four baselines and download only aggregate results.
+- Created `docs/experiment_notes.md` for the paper: research question, verified dataset counts, feature and label definitions, split protocol, experiment settings, evaluation metrics, hypotheses, limitations and future tuning/AutoGluon/HPC comparisons.
+
+### Blocker and workaround
+
+- The current Python execution environment is unavailable, so we could not run the new tests or execute E01 on real data. No training metrics or runtime have been measured. Do not record estimated or synthetic scores as real results.
+- Run the self-contained `notebooks/retention_baselines.ipynb` in Colab with the existing Flood-It ZIP. No BigQuery calls or Google Cloud credentials are needed. Alternatively run the Python scripts on a local CPU. No new cloud resources or HPC jobs were submitted.
+
+### Next up
+
+Run E01, verify the result ZIP and add the actual fold-level and mean validation results to the experiment notes. Compare the models before beginning T09 hyperparameter selection.
+
 ## 2026-11-27 - Prepare the retention training and testing sets (T07)
 
 ### What we did
