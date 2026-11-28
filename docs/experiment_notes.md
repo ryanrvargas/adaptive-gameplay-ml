@@ -16,7 +16,7 @@ Can early gameplay activity predict whether a new Flood-It! player starts anothe
 
 ## E01 - Untuned model comparison (T08)
 
-Status: **Code prepared; execution pending.**
+Status: **Completed and verified on Ryan's Windows laptop (2026-11-28).**
 
 Hypothesis: early activity may provide more predictive information than the overall return rate. We will test that by comparing three models against an uninformed dummy classifier. We do not yet know which model will perform best.
 
@@ -33,14 +33,18 @@ Primary model selection metric: mean average precision (AP) across the five vali
 
 Keep the 790 test players out of all training, preprocessing, model selection and hyperparameter tuning. The first script does not open the test CSV. Synthetic tests are strictly separated from real results.
 
-Results: pending. Fill this table only after verified execution.
+Results: five-fold chronological validation, not final test performance. The aggregate output files are archived in [E01](experiments/E01/).
 
-| Model | AP mean ± SD | ROC-AUC | Precision | Recall | F1 | Fit time |
-| --- | --- | --- | --- | --- | --- | --- |
-| Dummy | Pending | Pending | Pending | Pending | Pending | Pending |
-| Logistic Regression | Pending | Pending | Pending | Pending | Pending | Pending |
-| Random Forest | Pending | Pending | Pending | Pending | Pending | Pending |
-| XGBoost | Pending | Pending | Pending | Pending | Pending | Pending |
+| Model | Mean AP ± SD | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier | Mean fit (s) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression | 0.5793 ± 0.0514 | 0.7407 | 0.7579 | 0.6902 | 0.2866 | 0.4044 | 0.1720 | 0.0038 |
+| XGBoost | 0.4921 ± 0.0433 | 0.6823 | 0.7219 | 0.5210 | 0.4082 | 0.4568 | 0.2057 | 0.0665 |
+| Random Forest | 0.4664 ± 0.0394 | 0.6861 | 0.7082 | 0.4898 | 0.4299 | 0.4565 | 0.2017 | 0.1614 |
+| Dummy | 0.2884 ± 0.0413 | 0.5000 | 0.7116 | 0.0000 | 0.0000 | 0.0000 | 0.2058 | 0.0003 |
+
+The source ZIP and train CSV hashes match our verified split; all 20 fold rows, fold sizes, return rates, means and sample standard deviations check out. Environment: Python 3.11.9, NumPy 2.2.6, SciPy 1.17.1, scikit-learn 1.7.2, XGBoost 3.0.5, threadpoolctl 3.8.0, Windows, one CPU thread per fit. Total model fit time was 1.160 seconds, excluding data loading and evaluation.
+
+Interpretation: Logistic Regression ranked first by AP in all five folds, improved AP by 0.2909 absolute over the dummy and had the lowest Brier score. XGBoost and Random Forest had better F1 at threshold 0.5; Logistic Regression only detected 28.7% of actual returners at that threshold. This motivates tuning and, if useful, selecting a different threshold using validation data. These experiments show predictive association, not a causal effect of changing gameplay. We have not used the final test set.
 
 Run from the project repository with Python:
 
