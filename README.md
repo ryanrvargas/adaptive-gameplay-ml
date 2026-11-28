@@ -8,7 +8,8 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 - [x] Go through the Flood-It! dataset and see what we can predict
 - [x] Prepare the retention training and testing table
 - [x] Train baseline models
-- [ ] Compare models, tune their hyperparameters and compare with AutoGluon
+- [x] Tune hyperparameters and compare with the baseline
+- [ ] Compare with AutoGluon and evaluate on the untouched test set
 - [ ] Containerize the project and write the final report
 - [ ] Optional: build a playable puzzle-game demo
 - [ ] Optional: extend to purchase probability and future spending
@@ -58,6 +59,16 @@ python -m gameplay_ml.train_baselines
 ```
 
 Results are written to `results/retention_baselines/`. The first real run is complete. Logistic Regression led with mean validation AP 0.5793. The verified aggregate outputs are archived in [docs/experiments/E01/](docs/experiments/E01/). See the experiment notes for interpretation. We have not evaluated the final test set.
+
+## Hyperparameter tuning
+
+After preparing the split and installing the baseline requirements, run:
+
+```sh
+python -m gameplay_ml.tune_retention
+```
+
+The 72-configuration grid search uses the same five folds as E01. It writes aggregate outputs to `results/retention_tuning/`; the verified first run is archived in [docs/experiments/E02/](docs/experiments/E02/). Logistic Regression leads at 0.5814 mean AP, with Random Forest (0.5769) and XGBoost (0.5715) close behind. AutoGluon and final test evaluation are next.
 
 ## Keeping track of our work
 
