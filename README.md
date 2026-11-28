@@ -6,7 +6,8 @@ This is my final project for CSC 475/592. I want to see how we can use machine l
 
 - [x] Project proposal and repository structure
 - [x] Go through the Flood-It! dataset and see what we can predict
-- [ ] Put the data into a table and train baseline models
+- [x] Prepare the retention training and testing table
+- [ ] Train baseline models
 - [ ] Compare models, tune their hyperparameters and compare with AutoGluon
 - [ ] Containerize the project and write the final report
 - [ ] Optional: build a playable puzzle-game demo
@@ -32,6 +33,15 @@ Or use Docker:
 docker build -t adaptive-gameplay-ml .
 docker run --rm -v "$(pwd)/data:/app/data:ro" adaptive-gameplay-ml data/raw/events.csv
 ```
+
+To prepare the retention data from the exported ZIP, run:
+
+```sh
+python -m gameplay_ml.prepare_retention path/to/flood_it_audit.zip
+python -m unittest discover -s tests -v
+```
+
+This creates `data/processed/retention_split/` with train/test CSVs and a split summary, including five time-ordered validation folds. Use the five feature columns listed in the summary, not the player IDs or timestamps. The script will not overwrite a previous split; specify a new `--output` directory to repeat it. Keep the final test set untouched during tuning.
 
 Our step-by-step plan is in [docs/plan.md](docs/plan.md). The actual data, trained models and generated results are kept locally and ignored by Git.
 
