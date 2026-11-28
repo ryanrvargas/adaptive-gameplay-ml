@@ -125,6 +125,8 @@ Executed in a separate Linux Python 3.12.14 environment; pinned AutoGluon and ke
 
 References: [AutoGluon 1.5 fit documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.fit.html), [refit_full documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.refit_full.html).
 
+Reproducibility follow-up: a clean Windows installation initially lacked typing_extensions, causing import failure before training. Pinning typing_extensions==4.16.0 resolved the missing dependency in a completely isolated Linux verification environment; pip check passed, and all five AP scores reproduced exactly. Windows rerun pending.
+
 Next: freeze the exact E02 configurations, E03 portfolio/selection procedure and threshold before opening the final 790-player test set. Evaluate once using the held-out data and report both validation and test results.
 
 
