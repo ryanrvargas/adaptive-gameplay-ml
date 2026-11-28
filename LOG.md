@@ -2,6 +2,26 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-27 - Flood-It! data obtained and audited
+
+### What we did
+
+- Ryan ran the notebook and uploaded `flood_it_audit.zip`. This resolves the Google authorization blocker for the initial export.
+- Checked ZIP integrity, all four CSV row counts against the manifest, and the event inventory total against the dataset summary. All checks passed. The manifest records 1.823 GiB estimated and 1.825 GiB billed, below the 25 GiB cap. Billed bytes are usage, not a statement of dollars charged.
+- Source: 5,700,000 events, 15,175 unique players, 114 days from June 12 through October 3, 2018. There are 37 event types and 205 event/parameter pairs. No missing player IDs, timestamps or event names in the summary.
+- Candidate training table: 3,947 unique players (91.4% of the 4,319 players with a recorded first_open), 1,076 returned in the next seven days (27.26%) and 2,871 did not (72.74%). All required fields are present, no duplicate players, all feature windows are 24 hours, all feature counts are nonnegative and event-specific counts do not exceed total early events. The earliest and latest first-open timestamps are June 12 and September 26, 2018 UTC.
+- The export contains 1,912 ad_reward events across 354 players. It has ad unit, type, reward value and some ad event IDs, but the inventory does not show ad offers, declines or ad revenue. We can investigate prediction of future recorded rewards, not acceptance probability or cash revenue.
+- Quickplay has 523,430 starts, 191,088 completions, 137,035 failures and 122,278 resets. The board parameter is present on starts, completions and failures. These support exploring a level-success model, but we need to establish reliable attempt/outcome matching first. Only 27 in-app purchase events from 27 players were recorded, so we will not prioritize a purchase model.
+- Selected seven-day return as the first model target. The first five features use the first 24 hours, and the label uses only subsequent activity. A majority-class baseline is necessary because about 73% of this cohort did not return.
+
+### Next up
+
+- Finalize chronological splitting and use time-aware validation. A candidate 80/20 chronological split gives 790 test players; requiring training label windows to end by the first test prediction retains 2,795 training players and excludes 362 near the boundary. Confirm tie handling and split implementation before training.
+- Compare the dummy baseline, Logistic Regression, Random Forest and XGBoost. After establishing baseline performance, consider adding quickplay and reward features and a separate future ad-reward target. Keep raw IDs and player-level CSVs out of Git.
+- No models have been trained yet. No HPC is needed for the initial table of 3,947 rows.
+
+Export SHA-256: `474e7ed636a5891ace36645fe5d5bc6b593be47b8f3abaef26ef9eee7ed67c79`.
+
 ## 2026-11-26 - Colab account access and runtime authorization
 
 - Successfully signed in to Colab and opened the export notebook. Started a Python runtime.
