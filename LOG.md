@@ -2,6 +2,12 @@
 
 This is where we keep track of what we did, what got in the way, how we fixed it and what we need to work on next. Keep the real results separate from our practice runs.
 
+## 2026-11-28 - BigQuery access issue (T11a.2)
+
+- I tried running the extended export in Colab. The first dry run returned a 403 Forbidden error because the signed-in account does not have `bigquery.jobs.create` on the selected Google Cloud project. Neither query ran, and we have no new data from this attempt.
+- Checked Google's BigQuery documentation. We need to confirm we are using the same Google account and sandbox project that worked for the first export. If the account is correct, the project administrator needs to grant the BigQuery Job User role. No changes to the SQL, billing or permissions were made.
+- Next: fix the account/project access, rerun the dry-run cell and only continue with the export if the scan is within the cap. Keep the completed retention experiments unchanged.
+
 ## 2026-11-28 - Getting more gameplay data (T11a)
 
 ### What we did
