@@ -14,7 +14,7 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## P1 - Train and evaluate the models
 
-- [ ] T07 - Finalize the feature set and use a chronological train/test split. Reserve about 20% for testing, with a seven-day gap so training labels are known before the earliest test prediction. Keep player IDs and timestamps out of model inputs.
+- [x] T07 - Finalize the feature set and use a chronological train/test split. Reserve about 20% for testing, with a seven-day gap so training labels are known before the earliest test prediction. Keep player IDs and timestamps out of model inputs.
 - [ ] T08 - Train a simple baseline, Logistic Regression, Random Forest and XGBoost. Compare with five-fold cross-validation on the training data.
 - [ ] T09 - Tune hyperparameters using grid or random search. Save the settings and compare results before and after tuning.
 - [ ] T10 - Train AutoGluon with the same training data and compare all final models on the held-out data.
@@ -36,4 +36,4 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## Next up
 
-T07 and T08. Use the validated retention table from the export to create a leakage-safe split, train the baseline and compare models. No new Google login is needed for the first experiment.
+T08. Train the dummy baseline, Logistic Regression, Random Forest and XGBoost using the prepared chronological splits and five purged validation folds. Keep the final 790 test players out of model selection and tuning.
