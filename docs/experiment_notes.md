@@ -98,7 +98,35 @@ Outputs: candidate_metrics.csv, fold_metrics.csv, tuned_comparison.csv and exper
 
 ## E03 - AutoML comparison (T10)
 
-Pending. Compare AutoGluon using the same training feature set, target and time-aware validation. Any validation configuration must avoid random folds that mix future and past labels. Select and freeze methods before evaluating once on the final test set. Record actual hardware, runtime and settings.
+Status: **Validation completed and verified (2026-11-28). Final test evaluation pending.**
+
+AutoGluon TabularPredictor 1.5.0 used an explicit six-model CPU portfolio: linear model, Random Forest, Extra Trees, LightGBM, CatBoost and XGBoost. The five outer folds, source/training hashes, features, target, primary AP metric, seed and fixed 0.5 threshold match E01/E02. AutoGluon selected model/ensemble weights exclusively with an inner chronological 20% holdout and seven-day purge within each outer training block. Bagging, stacking and automatic threshold calibration were disabled. The chosen ensemble and its components were refitted on the inner fit and tuning sets. Outer evaluation rows were never used by AutoGluon for selection.
+
+| Outer fold | Eligible training | Inner fit | Inner holdout | Inner gap | Refitted component sample count | Outer AP |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 357 | 114 | 72 | 171 | 186 | 0.4985 |
+| 2 | 663 | 383 | 133 | 147 | 516 | 0.6408 |
+| 3 | 1146 | 647 | 230 | 269 | 877 | 0.5396 |
+| 4 | 1448 | 911 | 290 | 247 | 1201 | 0.5710 |
+| 5 | 2073 | 1303 | 415 | 355 | 1718 | 0.5120 |
+
+The first run attempted to restore gap rows after selection using refit_full(train_data_extra=...). Model metadata showed that AutoGluon 1.5.0 did not use the extra rows. Removed that argument, explicitly checked each refitted component's sample count and repeated the experiment. Every AP score reproduced exactly. This means AutoGluon had fewer fitting rows than the manually tuned models; the comparison is on identical outer validation populations but different effective training sizes, a limitation for the report.
+
+| Model | Mean AP ± sample SD | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression (tuned) | 0.5814 ± 0.0552 | 0.7427 | 0.7579 | 0.6940 | 0.2835 | 0.4017 | 0.1719 |
+| Random Forest (tuned) | 0.5769 ± 0.0584 | 0.7556 | 0.7622 | 0.6354 | 0.3976 | 0.4890 | 0.1680 |
+| XGBoost (tuned) | 0.5715 ± 0.0504 | 0.7475 | 0.7648 | 0.6539 | 0.3741 | 0.4756 | 0.1689 |
+| AutoGluon | 0.5524 ± 0.0567 | 0.7395 | 0.7494 | 0.6406 | 0.2869 | 0.3914 | 0.1740 |
+
+AutoGluon picked a weighted ensemble in all five folds, but ranked below the three tuned models by mean AP. This does not prove it is inferior generally, especially given the smaller effective training sets and single small dataset. Total measured fit and refit time was 12.68 seconds, excluding installation and other overhead. No GPU/PyTorch was required: AutoGluon emitted optional GPU-detection warnings, but all six CPU model families trained. scikit-learn also adjusted the quantile preprocessing sample count automatically for small folds.
+
+Executed in a separate Linux Python 3.12.14 environment; pinned AutoGluon and key dependency versions in requirements-automl.txt. The environment differs from E01/E02 because AG requires SciPy <1.17. The full metadata, fold scores and means are archived in [E03](experiments/E03/). Ten tests passed. Recomputed all aggregate means and SDs, verified the five actual refit component row counts and repeated AP scores. No test predictions have been produced.
+
+References: [AutoGluon 1.5 fit documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.fit.html), [refit_full documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.refit_full.html).
+
+Next: freeze the exact E02 configurations, E03 portfolio/selection procedure and threshold before opening the final 790-player test set. Evaluate once using the held-out data and report both validation and test results.
+
 
 ## Limitations and interpretation
 
