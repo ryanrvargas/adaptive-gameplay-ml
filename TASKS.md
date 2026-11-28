@@ -21,7 +21,7 @@ We will keep this file up to date as we work through the project. Start with the
 - [x] T10b - Freeze E02/E03 model settings and evaluate all final models on the 790 held-out players once.
 - [x] T11 - Make the plots and save the evaluation metrics and best model configuration.
 - [x] T11a.1 - Make the new SQL queries, Colab export notebook and audit script for quickplay and future ad rewards. Preliminary checks passed.
-- [ ] T11a.2 - Run the new Colab export and check the real class counts, matching coverage and chronological splits. **Waiting on `flood_it_extended.zip`.**
+- [ ] T11a.2 - Run the new Colab export and check the real class counts, matching coverage and chronological splits. **Blocked: BigQuery returned 403 (missing `bigquery.jobs.create`). Confirm the account/project access, then rerun the dry run and export.**
 - [ ] T11a.3 - If we have enough data, set up a separate quickplay and/or ad-reward experiment. Keep the finished retention results unchanged.
 
 ## P2 - Package the project
@@ -39,4 +39,4 @@ We will keep this file up to date as we work through the project. Start with the
 
 ## Next up
 
-T11a.2. Run the extended notebook and get the ZIP. Then we can check the data and decide which new model is worth training.
+T11a.2. Restore access to the existing BigQuery sandbox, rerun the dry run and get the ZIP. Then we can check the data and decide which new model is worth training.
