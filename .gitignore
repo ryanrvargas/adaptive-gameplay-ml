@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.venv-automl/
 .env
 .env.*
 data/raw/*
