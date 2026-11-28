@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .venv/
 .venv-automl/
+.venv-plots/
 .env
 .env.*
 data/raw/*
