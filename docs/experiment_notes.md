@@ -145,6 +145,10 @@ Reproducibility follow-up: a clean Windows installation initially lacked typing_
 AutoGluon had the highest observed test AP (0.4763), tuned XGBoost had highest ROC-AUC and F1, and tuned Logistic Regression had highest accuracy. The latter remains the prespecified selection; these are descriptive comparisons on one test cohort, not grounds to retune or select a new algorithm. Test return prevalence is 22.4%, lower than the mean validation prevalence of 28.8%, which may partly explain the lower AP. All tuned variants improved test AP over their respective untuned variants. The narrow differences and lack of independent external dataset limit generalization. No further tuning on the held-out test set.
 
 
+## Figures for the report (T11)
+
+The three [reproducible figures and captions](figures/README.md) cover tuning gains, validation versus held-out AP, and fixed-threshold confusion matrices. For a five-page report, prioritize Figures 1 and 2; use Figure 3 or the confusion-matrix counts if space permits. Error bars in Figure 1 represent one sample SD across the five validation folds, not confidence intervals. All images are derived solely from the archived E01–E04 aggregate metrics.
+
 ## Limitations and interpretation
 
 - The event sample is obfuscated, from 2018, and limited to one game. It is not necessarily representative of current games.
