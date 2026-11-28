@@ -2,7 +2,7 @@
 
 ## Research question
 
-Can early gameplay activity predict whether a new Flood-It! player starts another session within the next seven days? Our longer-term goal is to explore adaptive gameplay and rewarded-ad opportunities, but the first experiment is about predicting retention.
+I wanted to see if we could use the way someone plays Flood-It! to predict whether they will come back in the next seven days. This is a starting point for the bigger idea of adapting gameplay and offering rewards.
 
 ## Dataset and experimental design
 
@@ -18,7 +18,7 @@ Can early gameplay activity predict whether a new Flood-It! player starts anothe
 
 Status: **Completed and verified on Ryan's Windows laptop (2026-11-28).**
 
-Hypothesis: early activity may provide more predictive information than the overall return rate. We will test that by comparing three models against an uninformed dummy classifier. We do not yet know which model will perform best.
+What we wanted to find out: does the way someone plays in the first 24 hours tell us more than just the overall return rate? To test this, we compared three models to a dummy classifier without assuming which one would do best.
 
 | Model | Starting configuration |
 | --- | --- |
@@ -29,7 +29,7 @@ Hypothesis: early activity may provide more predictive information than the over
  
 Random seed 42 for the three trained algorithms; one CPU thread per fit. Python package versions are specified for the starting environment in requirements-baselines.txt; actual Python, operating system, package versions, input hashes, fold assignments by index range, and per-model settings are recorded by the script. We will pin the full environment for the final reproducibility package.
 
-Primary model selection metric: mean average precision (AP) across the five validation folds. AP summarizes the precision-recall curve using recall increments, so it is not interchangeable with trapezoidal PR-AUC. A no-skill ranking has AP equal to validation prevalence. Report mean and sample standard deviation, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1, Brier score and training time. Classification metrics use 0.5 as the probability threshold before tuning. Brier score measures squared probability error (lower is better).
+We used mean average precision (AP) across all five validation folds to pick our models. AP summarizes precision as recall increases; it is not the same as trapezoidal PR-AUC. A model with no ranking ability would have an AP equal to the proportion of positive examples. Report mean and sample standard deviation, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1, Brier score and training time. Classification metrics use 0.5 as the probability threshold before tuning. Brier score measures squared probability error (lower is better).
 
 Keep the 790 test players out of all training, preprocessing, model selection and hyperparameter tuning. The first script does not open the test CSV. Synthetic tests are strictly separated from real results.
 
@@ -44,7 +44,7 @@ Results: five-fold chronological validation, not final test performance. The agg
 
 The source ZIP and train CSV hashes match our verified split; all 20 fold rows, fold sizes, return rates, means and sample standard deviations check out. Environment: Python 3.11.9, NumPy 2.2.6, SciPy 1.17.1, scikit-learn 1.7.2, XGBoost 3.0.5, threadpoolctl 3.8.0, Windows, one CPU thread per fit. Total model fit time was 1.160 seconds, excluding data loading and evaluation.
 
-Interpretation: Logistic Regression ranked first by AP in all five folds, improved AP by 0.2909 absolute over the dummy and had the lowest Brier score. XGBoost and Random Forest had better F1 at threshold 0.5; Logistic Regression only detected 28.7% of actual returners at that threshold. This motivates tuning and, if useful, selecting a different threshold using validation data. These experiments show predictive association, not a causal effect of changing gameplay. We have not used the final test set.
+What we found: Logistic Regression did best in all five folds by AP. It improved AP by 0.2909 over the dummy and had the lowest Brier score. XGBoost and Random Forest had better F1 at threshold 0.5; Logistic Regression only detected 28.7% of actual returners at that threshold. This gave us a reason to tune the models and look at how the threshold affects precision and recall. The predictions don't tell us whether changing the game would cause better retention. At this point we had not used the final test set.
 
 Run from the project repository with Python:
 
@@ -61,7 +61,7 @@ Or download and run [retention_baselines.ipynb](../notebooks/retention_baselines
 
 Status: **Completed and verified (2026-11-28).**
 
-Used scikit-learn GridSearchCV with the same five expanding, seven-day-purged folds and the original E01 estimators. All 72 configurations were evaluated (360 total fits), including each untuned baseline. Scored using the same average precision, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1 and Brier score functions as E01, with threshold 0.5. Picked the highest mean validation AP per model, first candidate in deterministic grid order for exact ties. Refit disabled; the held-out test set was never loaded. The selected validation scores may be optimistic due to searching the same folds.
+We used scikit-learn's GridSearchCV with the same five time-ordered folds (including the seven-day gaps) and the same models from E01. All 72 configurations were evaluated (360 total fits), including each untuned baseline. Scored using the same average precision, ROC-AUC, accuracy, balanced accuracy, precision, recall, F1 and Brier score functions as E01, with threshold 0.5. For each model, we picked the setting with the highest mean validation AP. If two settings tied, we used the first in grid order. We didn't refit or load the test data. Searching many settings on the same folds can make the validation scores look better than they really are.
 
 | Model | Grid | Configurations |
 | --- | --- | ---: |
@@ -83,7 +83,7 @@ Used scikit-learn GridSearchCV with the same five expanding, seven-day-purged fo
 
 E01 was run on Ryan's Windows laptop (Python 3.11.9). E02 ran on Linux (Python 3.12.14) after creating an isolated environment with the same recorded NumPy, SciPy, scikit-learn, XGBoost and threadpoolctl versions. All three original hyperparameter configurations reproduced the E01 mean AP scores exactly. Total search wall time was 37.614 seconds, not directly comparable with E01 fit-only timing. No HPC job needed for this search.
 
-Logistic Regression remains first by AP, but the gap to Random Forest is only 0.0044; the fold variation is much larger, so we should not claim a clear winner. Restricting tree depth improved both tree models substantially, consistent with reduced overfitting, though that mechanism is not proven by validation scores alone. Random Forest has the best tuned F1, ROC-AUC and Brier score at the fixed threshold; XGBoost has the highest accuracy. Continue to select by AP, which was set before training. Test performance is unknown.
+Logistic Regression was still ahead by AP, but only by 0.0044 compared to Random Forest. The variation between folds was much larger than that, so we couldn't call one the clear winner. Both tree models did much better when we limited their depth. That could mean we reduced overfitting, but the validation results alone don't prove it. Random Forest has the best tuned F1, ROC-AUC and Brier score at the fixed threshold; XGBoost has the highest accuracy. Continue to select by AP, which was set before training. At this point we had not tested the models on the final test set.
 
 All 8 unit tests passed (including synthetic tests for the baseline and tuning). Independently checked 360 unique candidate/fold rows, 72 means and sample SDs for every metric, best AP selection, source/training hashes, folds and the original E01 scores. The aggregate output is archived in [E02](experiments/E02/). No player-level data committed.
 
@@ -98,7 +98,7 @@ Outputs: candidate_metrics.csv, fold_metrics.csv, tuned_comparison.csv and exper
 
 ## E03 - AutoML comparison (T10)
 
-Status: **Validation completed and verified (2026-11-28). Final test evaluation pending.**
+Status: **Validation completed and verified (2026-11-28).** The final test results are in E04 below.
 
 AutoGluon TabularPredictor 1.5.0 used an explicit six-model CPU portfolio: linear model, Random Forest, Extra Trees, LightGBM, CatBoost and XGBoost. The five outer folds, source/training hashes, features, target, primary AP metric, seed and fixed 0.5 threshold match E01/E02. AutoGluon selected model/ensemble weights exclusively with an inner chronological 20% holdout and seven-day purge within each outer training block. Bagging, stacking and automatic threshold calibration were disabled. The chosen ensemble and its components were refitted on the inner fit and tuning sets. Outer evaluation rows were never used by AutoGluon for selection.
 
@@ -119,9 +119,9 @@ The first run attempted to restore gap rows after selection using refit_full(tra
 | XGBoost (tuned) | 0.5715 ± 0.0504 | 0.7475 | 0.7648 | 0.6539 | 0.3741 | 0.4756 | 0.1689 |
 | AutoGluon | 0.5524 ± 0.0567 | 0.7395 | 0.7494 | 0.6406 | 0.2869 | 0.3914 | 0.1740 |
 
-AutoGluon picked a weighted ensemble in all five folds, but ranked below the three tuned models by mean AP. This does not prove it is inferior generally, especially given the smaller effective training sets and single small dataset. Total measured fit and refit time was 12.68 seconds, excluding installation and other overhead. No GPU/PyTorch was required: AutoGluon emitted optional GPU-detection warnings, but all six CPU model families trained. scikit-learn also adjusted the quantile preprocessing sample count automatically for small folds.
+AutoGluon picked a weighted ensemble in all five folds. Its mean AP was lower than the three models we tuned ourselves. That doesn't mean AutoGluon is worse in general. We were working with one small dataset, and AutoGluon had fewer rows to train on. Total measured fit and refit time was 12.68 seconds, excluding installation and other overhead. No GPU/PyTorch was required: AutoGluon emitted optional GPU-detection warnings, but all six CPU model families trained. scikit-learn also adjusted the quantile preprocessing sample count automatically for small folds.
 
-Executed in a separate Linux Python 3.12.14 environment; pinned AutoGluon and key dependency versions in requirements-automl.txt. The environment differs from E01/E02 because AG requires SciPy <1.17. The full metadata, fold scores and means are archived in [E03](experiments/E03/). Ten tests passed. Recomputed all aggregate means and SDs, verified the five actual refit component row counts and repeated AP scores. No test predictions have been produced.
+Executed in a separate Linux Python 3.12.14 environment; pinned AutoGluon and key dependency versions in requirements-automl.txt. The environment differs from E01/E02 because AG requires SciPy <1.17. The full metadata, fold scores and means are archived in [E03](experiments/E03/). Ten tests passed. Recomputed all aggregate means and SDs, verified the five actual refit component row counts and repeated AP scores. We had not made test predictions during E03.
 
 References: [AutoGluon 1.5 fit documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.fit.html), [refit_full documentation](https://auto.gluon.ai/1.5/api/autogluon.tabular.TabularPredictor.refit_full.html).
 
@@ -142,12 +142,16 @@ Reproducibility follow-up: a clean Windows installation initially lacked typing_
 | XGBoost (tuned) | 0.4671 | 0.7398 | 0.7899 | 0.5420 | 0.4011 | 0.4610 | 0.1530 |
 | AutoGluon | 0.4763 | 0.7378 | 0.7899 | 0.5455 | 0.3729 | 0.4430 | 0.1535 |
 
-AutoGluon had the highest observed test AP (0.4763), tuned XGBoost had highest ROC-AUC and F1, and tuned Logistic Regression had highest accuracy. The latter remains the prespecified selection; these are descriptive comparisons on one test cohort, not grounds to retune or select a new algorithm. Test return prevalence is 22.4%, lower than the mean validation prevalence of 28.8%, which may partly explain the lower AP. All tuned variants improved test AP over their respective untuned variants. The narrow differences and lack of independent external dataset limit generalization. No further tuning on the held-out test set.
+What was interesting is that AutoGluon had the highest test AP (0.4763), XGBoost had the highest ROC-AUC and F1, and Logistic Regression had the highest accuracy. We still keep the tuned Logistic Regression as the model we picked during validation. We don't want to pick a new winner or tune the models based on the test results. Test return prevalence is 22.4%, lower than the mean validation prevalence of 28.8%, which may partly explain the lower AP. All tuned variants improved test AP over their respective untuned variants. The narrow differences and lack of independent external dataset limit generalization. No further tuning on the held-out test set.
 
 
 ## Figures for the report (T11)
 
 The three [reproducible figures and captions](figures/README.md) cover tuning gains, validation versus held-out AP, and fixed-threshold confusion matrices. For a five-page report, prioritize Figures 1 and 2; use Figure 3 or the confusion-matrix counts if space permits. Error bars in Figure 1 represent one sample SD across the five validation folds, not confidence intervals. All images are derived solely from the archived E01–E04 aggregate metrics.
+
+## Next experiment — gameplay and ad rewards (T11a)
+
+I want to get closer to the original idea behind this project. The retention experiment is finished, so we're keeping those results as they are. We made [a new export](extended_data.md) for two separate targets: future recorded ad rewards and matched quickplay wins or losses. We have not run the live queries yet. The SQL and notebook passed preliminary checks, and three synthetic audit tests passed. Once we see the real positive and negative counts, we can decide which new model is worth training. We cannot predict actual ad acceptance or revenue using just reward events.
 
 ## Limitations and interpretation
 
