@@ -2,6 +2,33 @@
 
 This is where we will keep track of what we worked on, what got in the way, how we handled it and what needs to be done next. Keep results from real data separate from test data.
 
+## 2026-11-28 - E02 hyperparameter tuning completed (T09)
+
+### What we did
+
+- Added `gameplay_ml/tune_retention.py` with GridSearchCV and two synthetic tests. Used the exact E01 data and five purged folds; 72 configurations and 360 total fits. No final test rows accessed.
+- The local execution environment became available. Installed XGBoost and created an isolated Python environment with the same E01 library versions. E02 ran on Linux/Python 3.12.14 rather than Ryan's Windows/Python 3.11.9; all three original configurations reproduced E01 mean AP exactly.
+- Archived aggregate metrics and settings in `docs/experiments/E02/`, and documented the search grids, best parameter settings and interpretation in the experiment notes.
+
+| Model | E01 AP | E02 AP ± SD | AP change | ROC-AUC | Accuracy | Precision | Recall | F1 | Brier |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression | 0.5793 | 0.5814 ± 0.0552 | +0.0021 | 0.7427 | 0.7579 | 0.6940 | 0.2835 | 0.4017 | 0.1719 |
+| Random Forest | 0.4664 | 0.5769 ± 0.0584 | +0.1105 | 0.7556 | 0.7622 | 0.6354 | 0.3976 | 0.4890 | 0.1680 |
+| XGBoost | 0.4921 | 0.5715 ± 0.0504 | +0.0794 | 0.7475 | 0.7648 | 0.6539 | 0.3741 | 0.4756 | 0.1689 |
+
+| Model | Selected parameters | Search wall time (s) |
+| --- | --- | ---: |
+| Logistic Regression | C=0.1, class_weight=None | 0.644 |
+| Random Forest | 100 trees, max_depth=3, min_samples_leaf=1 | 31.014 |
+| XGBoost | 100 trees, max_depth=2, learning_rate=0.03, min_child_weight=1 | 5.956 |
+
+- The tree models improved substantially, particularly Random Forest. Logistic Regression remains narrowly ahead by AP, but the difference is small relative to fold variation; reserve judgment for the final held-out evaluation.
+- Eight unit tests passed. Verified 360 unique fold rows and all candidate summaries/best choices against the recorded scores. Total search wall time: 37.614 seconds. The earlier environment blocker is resolved. No HPC was required for this experiment.
+
+### Next up
+
+T10: AutoGluon comparison on the same features, training rows, chronological validation folds and AP metric. Check compatibility in a separate environment; run the same CPU experiment locally or use the HPC if dependency support or runtime warrants it. Freeze the final comparison settings before opening the held-out test set.
+
 ## 2026-11-28 - E01 baseline results from Ryan's laptop (T08)
 
 ### What we did
